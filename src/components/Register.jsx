@@ -1,23 +1,24 @@
 "use client"
 import { useState } from 'react';
-//import { authService } from '@/services/authService';
+import { authService } from '@/services/authService';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-// import { Icons } from '@/components/icons';
 import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation'
+
 
 export default function RegisterForm() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    profileImage: null
+    // profileImage: null
   });
-  const [imagePreview, setImagePreview] = useState('');
+  // const [imagePreview, setImagePreview] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,11 +44,11 @@ export default function RegisterForm() {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        profileImage: formData.profileImage // This is already set by handleImageChange
+        // profileImage: formData.profileImage
       });
-
       // Handle successful registration
-      redirect('/dashboard'); // or wherever you want to redirect after success
+      // redirect('/dashboard')
+      router.push('/dashboard')
     } catch (error) {
       setError(error.message || 'Registration failed');
     } finally {
@@ -64,13 +65,12 @@ export default function RegisterForm() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex justify-center mb-6">
-              <div className="relative">
+              {/* <div className="relative">
                 <Avatar className="h-24 w-24">
                   {imagePreview ? (
                     <AvatarImage src={imagePreview} alt="Profile preview" />
                   ) : (
                     <AvatarFallback>
-                      {/* <Icons.user className="h-12 w-12" /> */}
                     </AvatarFallback>
                   )}
                 </Avatar>
@@ -80,7 +80,7 @@ export default function RegisterForm() {
                   onChange={handleImageChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-              </div>
+              </div> */}
             </div>
 
             <div className="space-y-2">

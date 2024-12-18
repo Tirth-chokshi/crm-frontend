@@ -1,13 +1,12 @@
 'use client';
 import { useState } from 'react';
-//import { authService } from '@/services/authService';
+import { authService } from '@/services/authService';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { redirect } from 'next/navigation';
 
 export default function LoginForm() {
   const router = useRouter();
