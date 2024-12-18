@@ -52,8 +52,11 @@ export function NavUser() {
             'Authorization': `Bearer ${token}`
           }
         });
-
-        setAdminProfile(response.data);
+        if (response.data.admin) {
+          setAdminProfile(response.data.admin);
+        } else {
+          throw new Error('Invalid response format');
+        }
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -97,10 +100,6 @@ export function NavUser() {
           <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={adminProfile.pictruePath} alt={"name"} />
-                {/* <AvatarFallback className="rounded-lg">CN</AvatarFallback> */}
-              </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{adminProfile.username}</span>
                 <span className="truncate text-xs">{adminProfile.email}</span>
