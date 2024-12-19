@@ -40,6 +40,8 @@ import {
 // } from "./buttons";
 import Link from "next/link";
 import { AwardIcon } from "lucide-react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const columns = [
   "id",
@@ -52,7 +54,7 @@ const columns = [
 
 export default function DataTable() {
   const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -67,7 +69,29 @@ export default function DataTable() {
     };
     fetchCustomers();
   });
+  const handleDelete = async (customerId) => {
+    setLoading(true);
+    setError(null);
 
+    try {
+      const response = await fetch(`http://localhost:8000/customers/${customerId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete item');
+      }
+
+      // Remove the deleted customer from the UI
+      setCustomers((prevCustomers) =>
+        prevCustomers.filter((customer) => customer.customer_id !== customerId)
+      );
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <section>
       {/* Search and Controls */}
@@ -137,8 +161,30 @@ export default function DataTable() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="space-y-1">
+                    <div className="space-y-1" >
                       <p>{customer.action}</p>
+                      <div className="grid space-y-2">
+      {/* View Button */}
+      <button className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none">
+        <FontAwesomeIcon icon={faEye} className="mr-2" />
+        View
+      </button>
+
+      {/* Update Button */}
+      <button className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none">
+        <FontAwesomeIcon icon={faEdit} className="mr-2" />
+        Update
+      </button>
+
+      {/* Delete Button */}
+      <button className="flex items-center bg-red-500 text-white p-2 rounded-md hover:bg-red-600 focus:outline-none  " onClick={() => handleDelete(customer.customer_id)}
+                          disabled={loading}>
+        <FontAwesomeIcon icon={faTrash} className="mr-2" />
+        Delete
+      </button>
+    </div>
+
+                     
                     </div>
                   </TableCell>
                 </TableRow>
