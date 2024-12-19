@@ -9,6 +9,7 @@ import ModeToggle from '@/components/mode-toggle'
 import Footer from '@/components/Footer'
 
 export default function DashboardLayout({ children }) {
+  
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -17,7 +18,7 @@ export default function DashboardLayout({ children }) {
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />
                         <Separator orientation="vertical" className="mr-2 h-4" />
-                        <Breadcrumb>
+                        {/* <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href="#">
@@ -29,7 +30,7 @@ export default function DashboardLayout({ children }) {
                                     <BreadcrumbPage>Data Fetching</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
-                        </Breadcrumb>
+                        </Breadcrumb> */}
                     </div>
                     <div className="flex items-center gap-2 px-4">
                         <ModeToggle />

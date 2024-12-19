@@ -84,7 +84,7 @@ export function NavMain({
             </SidebarMenuItem>
           </Collapsible>
         ))}
-        <SidebarMenuItem>
+        {/* <SidebarMenuItem>
           <SidebarMenuButton >
             <CarFront />
             <Link href='/dashboard/drivers'>
@@ -103,7 +103,7 @@ export function NavMain({
             <Settings />
             App Settings
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </SidebarMenuItem> */}
       </SidebarMenu>
     </SidebarGroup>)
   );

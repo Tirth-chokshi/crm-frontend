@@ -42,15 +42,11 @@ import Link from "next/link";
 import { AwardIcon } from "lucide-react";
 
 const columns = [
-  "No",
-  "User Info",
-  "App Info",
-  "Mobile",
-  "CustCode",
-  "RefCode",
-  "Coin/Cash",
-  "Registerd On",
-  "Block",
+  "id",
+  "Name",
+  "Mobile No",
+  "E-mail",
+  "Activity Status",
   "Action",
 ];
 
