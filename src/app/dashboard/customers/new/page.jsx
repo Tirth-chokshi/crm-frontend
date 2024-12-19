@@ -1,16 +1,22 @@
-"use client"
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid"; // Install with npm install uuid
+"use client";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export default function FormComponent() {
   const [formData, setFormData] = useState({
-    id: uuidv4(),
+    id: "",
     name: "",
     mobile: "",
     email: "",
-    date: "",
     timestamp: new Date().toISOString(),
   });
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("formData");
+    if (storedData) {
+      setFormData(JSON.parse(storedData));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,24 +26,64 @@ export default function FormComponent() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form Submitted:", formData);
-    // Reset form and generate new ID
-    setFormData({
-      id: uuidv4(),
-      name: "",
-      mobile: "",
-      email: "",
-      date: "",
-      timestamp: new Date().toISOString(),
-    });
+
+    try {
+      const response = await fetch("http://localhost:8000/customers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Response from server:", result);
+
+        // Reset form and generate new timestamp
+        setFormData({
+          id: "",
+          name: "",
+          mobile: "",
+          email: "",
+          timestamp: new Date().toISOString(),
+        });
+
+        // Optionally show a success message
+        alert("Customer details submitted successfully!");
+      } else {
+        console.error("Failed to submit form:", response.statusText);
+        alert("Failed to submit form. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error while submitting the form:", error);
+      alert("An error occurred while submitting the form. Please check your network and try again.");
+    }
   };
 
   return (
     <div style={{ padding: "20px", maxWidth: "500px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
       <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Fill up the Customers Details</h1>
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+        {/* ID Field */}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <label htmlFor="id" style={{ marginBottom: "5px" }}>Customer ID:</label>
+          <input
+            type="number"
+            id="id"
+            name="id"
+            value={formData.id}
+            onChange={handleChange}
+            placeholder="(optional)"
+            // required
+            style={{ padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "5px" }}
+          />
+        </div>
+
+        {/* Name Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label htmlFor="name" style={{ marginBottom: "5px" }}>Name:</label>
           <input
@@ -52,6 +98,7 @@ export default function FormComponent() {
           />
         </div>
 
+        {/* Mobile Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label htmlFor="mobile" style={{ marginBottom: "5px" }}>Mobile No:</label>
           <input
@@ -67,6 +114,7 @@ export default function FormComponent() {
           />
         </div>
 
+        {/* Email Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label htmlFor="email" style={{ marginBottom: "5px" }}>Email:</label>
           <input
@@ -81,8 +129,8 @@ export default function FormComponent() {
           />
         </div>
 
-  
-        <button
+        {/* Submit Button */}
+        <Button
           type="submit"
           style={{
             padding: "10px 20px",
@@ -95,7 +143,7 @@ export default function FormComponent() {
           }}
         >
           Submit
-        </button>
+        </Button>
       </form>
     </div>
   );
