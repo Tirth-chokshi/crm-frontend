@@ -58,7 +58,7 @@ export default function DataTable() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await fetch("http://localhost:8000/customers/all");
+        const response = await fetch("http://localhost:8000/customers/");
         const data = await response.json();
         setCustomers(data);
       } catch (error) {
@@ -110,78 +110,35 @@ export default function DataTable() {
             </TableHeader>
             <TableBody>
               {customers.map((customer, index) => (
-                <TableRow key={customer._id || index}>
-                  <TableCell>{index + 1}</TableCell>
+                <TableRow key={customer.customer_id || index}>
+                  <TableCell>{customer.customer_id}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-3">
                       <div>
-                        <div className="font-bold">
-                          {customer.userInfo.name}
-                        </div>
-                        <div className="text-sm opacity-50">
-                          {customer.userInfo.email}
-                        </div>
                         <div className="text-sm">
-                          {customer.userInfo.gender},{" "}
-                          {customer.userInfo.age || "N/A"}
+                          {customer.name}
                         </div>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      <p>Platform: {customer.appInfo.platform}</p>
-                      <p>OS Version: {customer.appInfo.osVersion}</p>
-                      <p>App Version: {customer.appInfo.appVersion}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>{customer.mobile.phone}</div>
-                    <div className="text-sm opacity-50">
-                      {customer.mobile.whatsApp || "N/A"}
-                    </div>
-                  </TableCell>
-                  <TableCell>{customer.custCode}</TableCell>
-                  <TableCell>{customer.refCode || "N/A"}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <Coins className="mr-2 h-4 w-4" /> {customer.coin}
-                      <Wallet2 className="ml-4 mr-2 h-4 w-4" /> {customer.cash}
+                      <p>{customer.mobile}</p>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      <p>Coin: {customer.coin}</p>
-                      <p>Cash: {customer.cash}</p>
+                      <p>{customer.email}</p>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Switch
-                      checked={customer.block}
-                      onCheckedChange={() => {
-                        /* Implement block toggle */
-                      }}
-                    />
+                    <div className="space-y-1">
+                      <p>{customer.activity_status}</p>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex flex-col gap-2">
-                      <AddCashBtn />
-                      <AddCoinBtn />
-                      <NotiBtn />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link href={`/dashboard/customers/view/${customer._id}`}>
-                            <Button
-                              variant="outline"
-                              className="bg-cyan-500 hover:bg-cyan-600 text-white w-8 h-8 p-0"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>View Details</TooltipContent>
-                      </Tooltip>
-                      <Addresbtn />
+                    <div className="space-y-1">
+                      <p>{customer.action}</p>
                     </div>
                   </TableCell>
                 </TableRow>
