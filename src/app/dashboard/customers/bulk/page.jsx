@@ -1,17 +1,17 @@
 "use client"
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState } from "react"
+import { Button } from "@/components/ui/button"
 import * as XLSX from "xlsx";
 import { AlertCircle, Upload } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function UploadExcelPage() {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState("")
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     setSelectedFile(file);
     setError("");
   };
