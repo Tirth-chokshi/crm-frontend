@@ -50,7 +50,7 @@ export default function ViewCustomer() {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Customer Details</h1>
-      <div className="border rounded-lg shadow-md p-4 bg-white">
+      <div className="border rounded-lg shadow-md p-4">
         <table className="table-auto w-full mb-4">
           <tbody>
             <tr>
@@ -78,7 +78,7 @@ export default function ViewCustomer() {
       </div>
 
       <h2 className="text-xl font-semibold mt-6 mb-4">Activity Details</h2>
-      <div className="border rounded-lg shadow-md p-4 bg-white">
+      <div className="border rounded-lg shadow-md p-4">
         {activities.length > 0 ? (
           <table className="table-auto w-full">
             <thead>
