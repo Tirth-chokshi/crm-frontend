@@ -1,10 +1,10 @@
 "use client";
+import ActivityTable from "@/components/ActivityTable";
 import { MonthlyActivityChart } from "@/components/monthly-activity-chart";
 import { MonthlySalesChart } from "@/components/monthly-sales-chart";
 import { MonthlyUsersChart } from "@/components/monthly-users-chart";
-import { ShoppingCart, Users, Package, CreditCard } from "lucide-react";
+import { FileDiff, Users, UserCheck, UserMinus } from "lucide-react";
 import { useEffect, useState } from "react";
-
 export default function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,15 +49,15 @@ export default function Page() {
           <section>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <MetricCard
-                title="Today's Sales"
-                icon={<ShoppingCart className="h-6 w-6 text-green-500" />}
+                title="Today's New Cases Registered"
+                icon={<FileDiff className="h-6 w-6 text-green-500" />}
                 metrics={[
                   { label: "Orders", value: "0" },
                   { label: "Revenue", value: "₹0" },
                 ]}
               />
               <MetricCard
-                title="Today's Customers"
+                title="Total Customers"
                 icon={<Users className="h-6 w-6 text-blue-500" />}
                 metrics={[
                   { label: "Registered", value: "0" },
@@ -65,16 +65,16 @@ export default function Page() {
                 ]}
               />
               <MetricCard
-                title="Monthly Sales"
-                icon={<CreditCard className="h-6 w-6 text-purple-500" />}
+                title="Today's Follow-Up Session"
+                icon={<UserMinus className="h-6 w-6 text-purple-500" />}
                 metrics={[
                   { label: "Orders", value: "145" },
                   { label: "Revenue", value: "₹63,807" },
                 ]}
               />
               <MetricCard
-                title="Monthly Customers"
-                icon={<Package className="h-6 w-6 text-orange-500" />}
+                title="Total Cases ReSolved"
+                icon={<UserCheck className="h-6 w-6 text-orange-500" />}
                 metrics={[
                   { label: "Registered", value: "84" },
                   { label: "Unique Orders", value: "4" },
@@ -82,12 +82,13 @@ export default function Page() {
               />
             </div>
           </section>
+<ActivityTable/>
 
-          {/* Status Overview */}
+          {/* Status Overview
           <section className="grid md:grid-cols-2 gap-4">
             <DeliveryStatus />
             <PaymentStatus />
-          </section>
+          </section> */}
 
           {/* Charts Section */}
           <section>

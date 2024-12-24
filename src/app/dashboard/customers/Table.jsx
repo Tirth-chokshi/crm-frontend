@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-
+import {useRouter} from "next/navigation";
 const columns = [
   "id",
   "Name",
@@ -35,7 +35,7 @@ export default function DataTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const router = useRouter();
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -48,7 +48,10 @@ export default function DataTable() {
     };
     fetchCustomers();
   }, [])
-
+  const handleView = (customerId) => {
+    router.push(`/dashboard/customers/${customerId}`);
+  };
+  
   const handleDelete = async (customerId) => {
     setLoading(true);
     setError(null);
@@ -140,7 +143,10 @@ export default function DataTable() {
                     </TableCell>
                     <TableCell>
                       <div className="grid space-y-2">
-                        <button className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none">
+                        <button 
+                        
+                        onClick={() => handleView(customer.customer_id)}
+                        className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none">
                           <FontAwesomeIcon icon={faEye} className="mr-2" />
                           View
                         </button>
