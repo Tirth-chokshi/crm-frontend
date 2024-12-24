@@ -32,19 +32,11 @@ export function NavMain({
     (<SidebarGroup>
       <SidebarGroupLabel className="text-xl">
         <Link href={"/dashboard"}>
-          Admin Dasshboard
+          CRM
         </Link>
       </SidebarGroupLabel>
       <Separator orientation="horizontal" />
       <SidebarMenu>
-        <SidebarMenuItem>
-          <Link href={"/dashboard/sales"}>
-            <SidebarMenuButton >
-              <CreditCard />
-              Sales
-            </SidebarMenuButton>
-          </Link>
-        </SidebarMenuItem>
         <SidebarMenuItem>
           <Link href={"/dashboard/customers"}>
             <SidebarMenuButton >
