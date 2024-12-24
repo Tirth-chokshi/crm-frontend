@@ -92,6 +92,14 @@ export default function CRMActivityTable() {
   const handleNewActivity = () => {
     router.push("/dashboard/activity/new")
   }
+  const handleView = (activityId) => {
+    router.push(`/dashboard/activity/view/${activityId}`);
+    console.log(customer);
+  };
+
+  // const handleUpdate = (activity_id) => {
+  //   router.push(`/update/${activity_id}`);
+  // };
 
   return (
     <div className="container mx-auto p-6">
@@ -128,7 +136,7 @@ export default function CRMActivityTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            {["Activity ID", "Customer Name", "Activity Type", "Date", "Status"].map(
+            {["Activity ID", "Customer Name", "Activity Type", "Date", "Status", "Updation"].map(
               (header) => (
                 <TableHead
                   key={header}
@@ -160,6 +168,16 @@ export default function CRMActivityTable() {
               <TableCell>{activity["Activity Type"]}</TableCell>
               <TableCell>{new Date(activity.Date).toLocaleString()}</TableCell>
               <TableCell>{activity.Status}</TableCell>
+              <TableCell> 
+                <Button onClick={() => handleView(activity["Activity ID"])}
+                  style={{
+                    marginRight: '10px',
+                    right:"10px",
+                    cursor: "pointer",
+
+                  }}>View</Button>
+                <Button onClick={() => handleUpdate(activity.id)}>Update</Button>
+               </TableCell>
             </TableRow>
           ))}
         </TableBody>
