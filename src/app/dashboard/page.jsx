@@ -3,12 +3,18 @@ import ActivityTable from "@/components/ActivityTable";
 import { MonthlyActivityChart } from "@/components/monthly-activity-chart";
 import { MonthlySalesChart } from "@/components/monthly-sales-chart";
 import { MonthlyUsersChart } from "@/components/monthly-users-chart";
-import { FileDiff, Users, UserCheck, UserMinus, Section } from "lucide-react";
+import { FileDiff, Users, UserCheck, UserMinus } from "lucide-react";
 import { useEffect, useState } from "react";
 import TodaysFollowup from "@/components/TodaysFollowup";
+import TopCustomersChart from "@/components/TopCustomers";
+import ActivityTypeChart from "@/components/ActivityTypeChart";
+
 export default function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+  const [todaysFollowups, setTodaysFollowups] = useState(0);
+  const [resolvedCases, setResolvedCases] = useState(0);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -24,6 +30,38 @@ export default function Page() {
       }
     };
     checkAuth();
+  }, []);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        // Fetch Customers
+        const customerResponse = await fetch("http://localhost:8000/customers/");
+        if (!customerResponse.ok) throw new Error("Failed to fetch customers");
+        const customers = await customerResponse.json();
+        setTotalCustomers(customers.length);
+
+        // Fetch Today's Followup
+        const followupResponse = await fetch("http://localhost:8000/activities/dailyfollowup");
+        if (!followupResponse.ok) throw new Error("Failed to fetch follow-ups");
+        const followups = await followupResponse.json();
+        setTodaysFollowups(followups.length);
+
+        // Fetch Resolved Cases
+        const resolvedResponse = await fetch("http://localhost:8000/activities/resolved");
+        if (!resolvedResponse.ok) {
+          throw new Error("Failed to fetch resolved cases");
+        }
+        const data = await resolvedResponse.json();
+        const resolvedCount = data[0]?.resolved_count || 0; // Extract the resolved_count value
+        setResolvedCases(resolvedCount); // Store the count in state
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      }
+    };
+
+    fetchCounts();
   }, []);
 
   if (loading) {
@@ -50,66 +88,45 @@ export default function Page() {
           <section>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <MetricCard
-                title="Today's New Cases Registered"
-                icon={<FileDiff className="h-6 w-6 text-green-500" />}
-                metrics={[
-                  { label: "Orders", value: "0" },
-                  { label: "Revenue", value: "₹0" },
-                ]}
-              />
-              <MetricCard
                 title="Total Customers"
                 icon={<Users className="h-6 w-6 text-blue-500" />}
-                metrics={[
-                  { label: "Registered", value: "0" },
-                  { label: "Unique Orders", value: "0" },
-                ]}
+                metrics={[{ label: "Customers", value: totalCustomers }]}
               />
               <MetricCard
                 title="Today's Follow-Up Session"
                 icon={<UserMinus className="h-6 w-6 text-purple-500" />}
-                metrics={[
-                  { label: "Orders", value: "145" },
-                  { label: "Revenue", value: "₹63,807" },
-                ]}
+                metrics={[{ label: "Followups", value: todaysFollowups }]}
               />
               <MetricCard
-                title="Total Cases ReSolved"
+                title="Total Cases Resolved"
                 icon={<UserCheck className="h-6 w-6 text-orange-500" />}
-                metrics={[
-                  { label: "Registered", value: "84" },
-                  { label: "Unique Orders", value: "4" },
-                ]}
+                metrics={[{ label: "Resolved", value: resolvedCases }]}
               />
             </div>
           </section>
           <section className="grid md:grid-cols-2 gap-4">
             <TodaysFollowup />
-            <ActivityTable/>
+            <ActivityTable />
           </section>
-          {/* Status Overview
-          <section className="grid md:grid-cols-2 gap-4">
-            <DeliveryStatus />
-            <PaymentStatus />
-          </section> */}
 
           {/* Charts Section */}
           <section>
             <div className="space-y-6">
-              {/* Monthly Sales Chart */}
-              <div className="border rounded-lg p-4 shadow-sm">
+              {/* <div className="border rounded-lg p-4 shadow-sm">
                 <MonthlySalesChart />
               </div>
-
-              {/* Monthly Users Chart */}
               <div className="border rounded-lg p-4 shadow-sm">
                 <MonthlyUsersChart />
-              </div>
-
-              {/* Monthly Activity Chart */}
+              </div> */}
               <div className="border rounded-lg p-4 shadow-sm">
-                <MonthlyActivityChart />
+                <TopCustomersChart/>
               </div>
+              <div className="border rounded-lg p-4 shadow-sm">
+                <ActivityTypeChart/>
+              </div>
+              {/* <div className="border rounded-lg p-4 shadow-sm">
+                <MonthlyActivityChart />
+              </div> */}
             </div>
           </section>
         </div>
@@ -130,70 +147,8 @@ function MetricCard({ title, icon, metrics }) {
       <div className="flex justify-between">
         {metrics.map((metric, index) => (
           <div key={index} className="text-center">
-            <div className="text-2xl font-bold ">{metric.value}</div>
+            <div className="text-2xl font-bold">{metric.value}</div>
             <div className="text-sm text-gray-500">{metric.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function DeliveryStatus() {
-  const statuses = [
-    { label: "Order Received", value: "0", color: "bg-red-500" },
-    { label: "Processing", value: "0", color: "bg-green-500" },
-    { label: "On Delivery", value: "0", color: "bg-orange-500" },
-    { label: "Delivered", value: "0", color: "bg-blue-500" },
-    { label: "Cancelled", value: "0", color: "bg-gray-500" },
-    { label: "Delivery Pending", value: "5", color: "bg-yellow-500" },
-  ];
-
-  return (
-    <div className="rounded-lg border shadow-sm p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Today&aposs Delivery Status</h3>
-      </div>
-
-      <div className="space-y-3">
-        {statuses.map((status, index) => (
-          <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className={`h-3 w-3 rounded-full ${status.color}`} />
-              <span className="text-sm ">{status.label}</span>
-            </div>
-            <span className="font-medium ">{status.value}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PaymentStatus() {
-  const payments = [
-    { method: "Cash Paid", value: "0", color: "bg-red-500" },
-    { method: "Paytm Wallet", value: "0", color: "bg-green-500" },
-    { method: "UPI Paid", value: "0", color: "bg-orange-500" },
-    { method: "Mytro Wallet", value: "0", color: "bg-purple-500" },
-    { method: "Online", value: "0", color: "bg-blue-500" },
-    { method: "Pending", value: "0", color: "bg-yellow-500" },
-  ];
-
-  return (
-    <div className="rounded-lg border shadow-sm p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Today&aposs Payment Status</h3>
-      </div>
-
-      <div className="space-y-3">
-        {payments.map((payment, index) => (
-          <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className={`h-3 w-3 rounded-full ${payment.color}`} />
-              <span className="text-sm ">{payment.method}</span>
-            </div>
-            <span className="font-medium ">{payment.value}</span>
           </div>
         ))}
       </div>
