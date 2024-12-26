@@ -38,11 +38,8 @@ const ActivityTable = ({heading}) => {
           id: index + 1,
           activityType: item["Activity type"],
           customerName: item["Customer name"],
-          date: new Date(item.Date).toISOString(),
-          status: determineStatus(new Date(item.Date)),
-          query: item.query || '',
-          caseResolved: item.case_resolved || 'Not Resolved',
-          comments: item.comments || ''
+          date: new Date(item["Next followup Date"]).toISOString(),
+          status: item.Status || 'Pending'
         }));
         
         setActivities(transformedData);
@@ -57,27 +54,14 @@ const ActivityTable = ({heading}) => {
     fetchActivities();
   }, []);
 
-  // Determine status based on date
-  const determineStatus = (activityDate) => {
-    const now = new Date();
-    const date = new Date(activityDate);
-    
-    if (date < now) {
-      return "Completed";
-    } else if (date.toDateString() === now.toDateString()) {
-      return "In Progress";
-    }
-    return "Pending";
-  };
-
   // Status badge styling
   const getStatusBadgeStyle = (status) => {
-    switch (status) {
-      case "Pending":
+    switch (status.toLowerCase()) {
+      case "pending":
         return "bg-yellow-200 text-yellow-700";
-      case "In Progress":
-        return "bg-blue-200 text-blue-700";
-      case "Completed":
+      case "not resolved":
+        return "bg-red-200 text-red-700";
+      case "resolved":
         return "bg-green-200 text-green-700";
       default:
         return "bg-gray-200 text-gray-700";
@@ -92,7 +76,7 @@ const ActivityTable = ({heading}) => {
     
     const matchesStatus = 
       statusFilter === "all" || 
-      activity.status.toLowerCase().replace(" ", "-") === statusFilter;
+      activity.status.toLowerCase() === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -104,7 +88,6 @@ const ActivityTable = ({heading}) => {
   if (error) {
     return <div className="p-4 text-red-500">{error}</div>;
   }
-
 
   return (
     <div className="p-4 space-y-4">
@@ -123,8 +106,8 @@ const ActivityTable = ({heading}) => {
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="in-progress">In Progress</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="not resolved">Not Resolved</SelectItem>
+            <SelectItem value="resolved">Resolved</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -134,9 +117,8 @@ const ActivityTable = ({heading}) => {
             <TableRow>
               <TableHead>Activity Type</TableHead>
               <TableHead>Customer Name</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>Next Follow-up Date</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Case Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -149,10 +131,6 @@ const ActivityTable = ({heading}) => {
                   <Badge className={getStatusBadgeStyle(activity.status)}>
                     {activity.status}
                   </Badge>
-                </TableCell>
-                <TableCell>{activity.caseResolved}</TableCell>
-                <TableCell className="max-w-xs truncate">
-                  {activity.comments}
                 </TableCell>
               </TableRow>
             ))}
