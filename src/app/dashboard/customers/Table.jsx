@@ -76,6 +76,11 @@ export default function DataTable() {
     }
   };
 
+
+  const handleUpdate = async (customerId) => {
+    router.push(`/dashboard/customers/update/${customerId}`);
+  }
+
   const filteredCustomers = customers.filter((customer) =>
     customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -150,7 +155,9 @@ export default function DataTable() {
                           <FontAwesomeIcon icon={faEye} className="mr-2" />
                           View
                         </button>
-                        <button className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none">
+                        <button 
+                        onClick={() => handleUpdate(customer.customer_id)}
+                        className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none">
                           <FontAwesomeIcon icon={faEdit} className="mr-2" />
                           Update
                         </button>
