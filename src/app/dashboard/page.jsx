@@ -5,6 +5,7 @@ import { MonthlySalesChart } from "@/components/monthly-sales-chart";
 import { MonthlyUsersChart } from "@/components/monthly-users-chart";
 import { FileDiff, Users, UserCheck, UserMinus, Section } from "lucide-react";
 import { useEffect, useState } from "react";
+import TodaysFollowup from "@/components/TodaysFollowup";
 export default function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -83,8 +84,8 @@ export default function Page() {
             </div>
           </section>
           <section className="grid md:grid-cols-2 gap-4">
-            <ActivityTable heading="Today's Activities" />
-            <ActivityTable heading="Upcoming Activities" />
+            <TodaysFollowup />
+            <ActivityTable/>
           </section>
           {/* Status Overview
           <section className="grid md:grid-cols-2 gap-4">
