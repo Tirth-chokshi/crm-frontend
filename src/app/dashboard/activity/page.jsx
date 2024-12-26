@@ -100,6 +100,10 @@ export default function CRMActivityTable() {
   // const handleUpdate = (activity_id) => {
   //   router.push(`/update/${activity_id}`);
   // };
+  const handleUpdate = (activityId) => {
+    console.log("Activity ID being passed:", activityId);
+    router.push(`/dashboard/activity/update/${activityId}`);
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -176,7 +180,7 @@ export default function CRMActivityTable() {
                     cursor: "pointer",
 
                   }}>View</Button>
-                <Button onClick={() => handleUpdate(activity.id)}>Update</Button>
+                <Button onClick={() => handleUpdate(activity["Activity ID"])}>Update</Button>
                </TableCell>
             </TableRow>
           ))}
