@@ -7,7 +7,7 @@ export default function Footer() {
                 {/* Copyright */}
                 <div className="mt-8 pt-6 border-t text-center">
                     <p className="text-muted-foreground text-sm">
-                        © {currentYear} <b>Mytro</b> All Rights Reserved.
+                        © {currentYear} <b>CRM-Tirth</b> All Rights Reserved.
                     </p>
                 </div>
         </footer>
