@@ -58,6 +58,7 @@ const CreateActivityForm = () => {
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+  const [selectedCustomerName, setSelectedCustomerName] = useState('');
   const { toast } = useToast();
   
   const form = useForm({
@@ -74,7 +75,6 @@ const CreateActivityForm = () => {
       next_followup_date: new Date(),
     }
   });
-
   useEffect(() => {
     fetchCustomers();
   }, []);
@@ -94,6 +94,7 @@ const CreateActivityForm = () => {
   };
 
   const filterCustomers = (searchText) => {
+    setSelectedCustomerName(searchText);
     const filtered = customers.filter(customer => 
       customer.name.toLowerCase().includes(searchText.toLowerCase())
     );
@@ -154,25 +155,33 @@ const CreateActivityForm = () => {
                     <Input
                       type="text"
                       placeholder="Search customer..."
+                      value={selectedCustomerName}
                       onChange={(e) => {
                         filterCustomers(e.target.value);
                       }}
                       onFocus={() => setShowCustomerDropdown(true)}
+                      className="w-full"
                     />
                     {showCustomerDropdown && (
-                      <div className="absolute z-10 w-full mt-1 border rounded-md shadow-lg max-h-48 overflow-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-background border rounded-md shadow-lg max-h-48 overflow-auto">
                         {filteredCustomers.map((customer) => (
                           <div
                             key={customer.customer_id}
-                            className="p-2 hover:bg-gray-500 hover:text-gray-900 cursor-pointer"
+                            className="p-2 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors duration-200"
                             onClick={() => {
                               field.onChange(customer.customer_id);
+                              setSelectedCustomerName(customer.name);
                               setShowCustomerDropdown(false);
                             }}
                           >
                             {customer.name}
                           </div>
                         ))}
+                        {filteredCustomers.length === 0 && (
+                          <div className="p-2 text-muted-foreground">
+                            No customers found
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
