@@ -171,7 +171,14 @@ export default function CRMActivityTable() {
               <TableCell>{activity["Customer Name"]}</TableCell>
               <TableCell>{activity["Activity Type"]}</TableCell>
               <TableCell>{new Date(activity.Date).toLocaleString()}</TableCell>
-              <TableCell>{activity.Status}</TableCell>
+              <TableCell>
+                <span
+                  className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                    activity.Status === "Resolved" ? "bg-green-500" : activity.Status === "Not Resolved" ? "bg-red-500" : "bg-yellow-500"
+                  }`}
+                ></span>
+                {activity.Status}
+              </TableCell>
               <TableCell> 
                 <Button onClick={() => handleView(activity["Activity ID"])}
                   style={{
