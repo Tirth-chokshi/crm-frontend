@@ -69,10 +69,7 @@ export default function ViewCustomer() {
               <td className="font-medium border px-4 py-2">Mobile</td>
               <td className="border px-4 py-2">{customer.mobile}</td>
             </tr>
-            <tr>
-              <td className="font-medium border px-4 py-2">Status</td>
-              <td className="border px-4 py-2">{customer.activity_status}</td>
-            </tr>
+           
           </tbody>
         </table>
       </div>
