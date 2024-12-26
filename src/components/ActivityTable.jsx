@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-const ActivityTable = () => {
+const ActivityTable = ({heading}) => {
   const [activities, setActivities] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -105,8 +105,10 @@ const ActivityTable = () => {
     return <div className="p-4 text-red-500">{error}</div>;
   }
 
+
   return (
     <div className="p-4 space-y-4">
+      <h2 className="text-xl font-semibold mb-4">{heading}</h2>
       <div className="flex justify-between items-center gap-4">
         <Input
           placeholder="Search by customer or activity type..."
@@ -135,7 +137,6 @@ const ActivityTable = () => {
               <TableHead>Date</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Case Status</TableHead>
-              <TableHead>Comments</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

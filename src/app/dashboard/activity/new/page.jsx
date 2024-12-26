@@ -160,11 +160,11 @@ const CreateActivityForm = () => {
                       onFocus={() => setShowCustomerDropdown(true)}
                     />
                     {showCustomerDropdown && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-auto">
+                      <div className="absolute z-10 w-full mt-1 border rounded-md shadow-lg max-h-48 overflow-auto">
                         {filteredCustomers.map((customer) => (
                           <div
                             key={customer.customer_id}
-                            className="p-2 hover:bg-gray-100 cursor-pointer"
+                            className="p-2 hover:bg-gray-500 hover:text-gray-900 cursor-pointer"
                             onClick={() => {
                               field.onChange(customer.customer_id);
                               setShowCustomerDropdown(false);

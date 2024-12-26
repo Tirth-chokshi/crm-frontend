@@ -3,7 +3,7 @@ import ActivityTable from "@/components/ActivityTable";
 import { MonthlyActivityChart } from "@/components/monthly-activity-chart";
 import { MonthlySalesChart } from "@/components/monthly-sales-chart";
 import { MonthlyUsersChart } from "@/components/monthly-users-chart";
-import { FileDiff, Users, UserCheck, UserMinus } from "lucide-react";
+import { FileDiff, Users, UserCheck, UserMinus, Section } from "lucide-react";
 import { useEffect, useState } from "react";
 export default function Page() {
   const [loading, setLoading] = useState(true);
@@ -82,8 +82,10 @@ export default function Page() {
               />
             </div>
           </section>
-<ActivityTable/>
-
+          <section className="grid md:grid-cols-2 gap-4">
+            <ActivityTable heading="Today's Activities" />
+            <ActivityTable heading="Upcoming Activities" />
+          </section>
           {/* Status Overview
           <section className="grid md:grid-cols-2 gap-4">
             <DeliveryStatus />
