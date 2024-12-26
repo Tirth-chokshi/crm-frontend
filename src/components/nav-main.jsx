@@ -24,6 +24,9 @@ import { CarFront } from "lucide-react";
 import { Upload } from "lucide-react";
 import { Settings } from "lucide-react";
 import Link from "next/link";
+import { LayoutDashboard } from 'lucide-react';
+
+
 
 export function NavMain({
   items
@@ -31,12 +34,20 @@ export function NavMain({
   return (
     (<SidebarGroup>
       <SidebarGroupLabel className="text-xl">
-        <Link href={"/dashboard"}>
+        <Link  href={"/dashboard"}>
           CRM
         </Link>
       </SidebarGroupLabel>
       <Separator orientation="horizontal" />
       <SidebarMenu>
+      <SidebarMenuItem>
+          <Link href={"/dashboard"}>
+            <SidebarMenuButton >
+            <LayoutDashboard />
+              Dashboard
+            </SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
         <SidebarMenuItem>
           <Link href={"/dashboard/customers"}>
             <SidebarMenuButton >

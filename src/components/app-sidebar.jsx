@@ -21,6 +21,7 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
+
   navMain: [
     {
       title: "Activities",
@@ -53,6 +54,7 @@ export function AppSidebar({
       <SidebarContent>
         <NavMain items={data.navMain} />        
       </SidebarContent>
+     
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>  
