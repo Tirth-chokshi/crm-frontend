@@ -5,51 +5,68 @@ import { useParams, useRouter } from "next/navigation";
 export default function ViewCustomer() {
   const [customer, setCustomer] = useState(null);
   const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [customerLoading, setCustomerLoading] = useState(true);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
+  const [customerError, setCustomerError] = useState(null);
+  const [activitiesError, setActivitiesError] = useState(null);
   const router = useRouter();
   const { id } = useParams();
 
   useEffect(() => {
     if (!id) return;
 
-    const fetchCustomerAndActivities = async () => {
+    const fetchCustomer = async () => {
       try {
-        setLoading(true);
-
-        // Fetch customer details
-        const customerResponse = await fetch(`http://localhost:8000/customers/${id}`);
-        if (!customerResponse.ok) {
+        setCustomerLoading(true);
+        const response = await fetch(`http://localhost:8000/customers/${id}`);
+        if (!response.ok) {
           throw new Error("Failed to fetch customer details");
         }
-        const customerData = await customerResponse.json();
-
-        // Fetch activity details
-        const activitiesResponse = await fetch(`http://localhost:8000/activities/customer/${id}`);
-        if (!activitiesResponse.ok) {
-          throw new Error("Failed to fetch activity details");
-        }
-        const activitiesData = await activitiesResponse.json();
-
-        setCustomer(customerData);
-        setActivities(activitiesData);
+        const data = await response.json();
+        setCustomer(data);
       } catch (err) {
-        setError(err.message);
+        setCustomerError(err.message);
       } finally {
-        setLoading(false);
+        setCustomerLoading(false);
       }
     };
 
-    fetchCustomerAndActivities();
+    const fetchActivities = async () => {
+      try {
+        setActivitiesLoading(true);
+        const response = await fetch(`http://localhost:8000/activities/customer/${id}`);
+        if (!response.ok) {
+          // throw new Error("Failed to fetch activity details");
+        }
+        const data = await response.json();
+        setActivities(data);
+      } catch (err) {
+        setActivitiesError(err.message);
+        setActivities([]);
+      } finally {
+        setActivitiesLoading(false);
+      }
+    };
+
+    // Fetch customer and activities separately
+    fetchCustomer();
+    fetchActivities();
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  // Show loading state while customer data is being fetched
+  if (customerLoading) return <div>Loading customer details...</div>;
+  
+  // Show error if customer data couldn't be fetched
+  if (customerError) return <div>Error loading customer: {customerError}</div>;
+  
+  // Show error if customer doesn't exist
   if (!customer) return <div>Customer not found</div>;
 
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Customer Details</h1>
+      
+      {/* Customer Details Section */}
       <div className="border rounded-lg shadow-md p-4">
         <table className="table-auto w-full mb-4">
           <tbody>
@@ -69,14 +86,18 @@ export default function ViewCustomer() {
               <td className="font-medium border px-4 py-2">Mobile</td>
               <td className="border px-4 py-2">{customer.mobile}</td>
             </tr>
-           
           </tbody>
         </table>
       </div>
 
+      {/* Activities Section */}
       <h2 className="text-xl font-semibold mt-6 mb-4">Activity Details</h2>
       <div className="border rounded-lg shadow-md p-4">
-        {activities.length > 0 ? (
+        {activitiesLoading ? (
+          <div>Loading activities...</div>
+        ) : activitiesError ? (
+          <div className="text-red-500">Error loading activities: {activitiesError}</div>
+        ) : activities.length > 0 ? (
           <table className="table-auto w-full">
             <thead>
               <tr>
@@ -98,7 +119,7 @@ export default function ViewCustomer() {
             </tbody>
           </table>
         ) : (
-          <p>No activities found for this customer.</p>
+          <p className="text-gray-600">No activities found for this customer.</p>
         )}
       </div>
 
