@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-const ActivityTable = () => {
+const ActivityTable = ({ heading }) => {
   const [activities, setActivities] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -27,25 +27,25 @@ const ActivityTable = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await fetch('http://localhost:8000/activities/upcoming');
+        const response = await fetch("http://localhost:8000/activities/dailyfollowup");
         if (!response.ok) {
-          throw new Error('Failed to fetch activities');
+          throw new Error("Failed to fetch activities");
         }
         const data = await response.json();
-        
+
         // Transform API data to match our table structure
-        const transformedData = data.map((item, index) => ({
-          id: index + 1,
-          activityType: item["Activity type"],
-          customerName: item["Customer name"],
-          date: new Date(item["Next followup Date"]).toISOString(),
-          status: item.Status || 'Pending'
+        const transformedData = data.map((item) => ({
+          id: item["Activity ID"],
+          activityType: item["Activity Type"],
+          customerName: item["Customer Name"],
+          date: item["Next followup Date"],
+          status: item["Status"],
         }));
-        
+
         setActivities(transformedData);
         setError(null);
       } catch (err) {
-        setError('Failed to load activities. Please try again later.');
+        setError("Failed to load activities. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -69,13 +69,13 @@ const ActivityTable = () => {
   };
 
   // Filter activities based on search and status
-  const filteredActivities = activities.filter(activity => {
-    const matchesSearch = 
+  const filteredActivities = activities.filter((activity) => {
+    const matchesSearch =
       activity.customerName.toLowerCase().includes(search.toLowerCase()) ||
       activity.activityType.toLowerCase().includes(search.toLowerCase());
-    
-    const matchesStatus = 
-      statusFilter === "all" || 
+
+    const matchesStatus =
+      statusFilter === "all" ||
       activity.status.toLowerCase() === statusFilter;
 
     return matchesSearch && matchesStatus;
@@ -91,7 +91,7 @@ const ActivityTable = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <h2 className="text-xl font-semibold mb-4">Upcoming Activities</h2>
+      <h2 className="text-xl font-semibold mb-4">{heading || "Today's Follow-Up"}</h2>
       <div className="flex justify-between items-center gap-4">
         <Input
           placeholder="Search by customer or activity type..."
@@ -126,7 +126,13 @@ const ActivityTable = () => {
               <TableRow key={activity.id}>
                 <TableCell>{activity.activityType}</TableCell>
                 <TableCell>{activity.customerName}</TableCell>
-                <TableCell>{new Date(activity.date).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {new Date(activity.date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </TableCell>
                 <TableCell>
                   <Badge className={getStatusBadgeStyle(activity.status)}>
                     {activity.status}
