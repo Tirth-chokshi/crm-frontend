@@ -6,14 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useParams } from "next/navigation";
 
 export default function UpdateActivityPage({ params }) {
   const router = useRouter();
-  const {id} = useParams();
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activity, setActivity] = useState({
@@ -21,32 +27,34 @@ export default function UpdateActivityPage({ params }) {
     overall_response: "",
     comments: "",
     resolution: "",
-    case_resolved: false,
-    next_followup_date: ""
+    case_resolved: "Pending", // Default state
+    next_followup_date: "",
   });
 
   useEffect(() => {
     const fetchActivity = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:8000/activities/main/${id}`);
-        
+        const response = await fetch(
+          `http://localhost:8000/activities/main/${id}`
+        );
+
         if (!response.ok) {
-          throw new Error('Failed to fetch activity data');
+          throw new Error("Failed to fetch activity data");
         }
-        
+
         const data = await response.json();
-        
+
         // Transform the data to match our form structure
         setActivity({
           customer_response: data.customer_response || "",
           overall_response: data.overall_response || "",
           comments: data.comments || "",
           resolution: data.resolution || "",
-          case_resolved: data.case_resolved || false,
-          next_followup_date: data.next_followup_date ? 
-            new Date(data.next_followup_date).toISOString().split('T')[0] : 
-            ""
+          case_resolved: data.case_resolved || "Pending",
+          next_followup_date: data.next_followup_date
+            ? new Date(data.next_followup_date).toISOString().split("T")[0]
+            : "",
         });
       } catch (err) {
         console.error("Fetch error:", err);
@@ -63,50 +71,42 @@ export default function UpdateActivityPage({ params }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setActivity(prev => ({
+    setActivity((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleCaseStatusChange = (newStatus) => {
-    const resolved = newStatus === "Resolved";
-    setActivity((prevState) => ({
-      ...prevState,
-      case_status: newStatus,
-      case_resolved: resolved,
+  const handleCaseStatusChange = (value) => {
+    setActivity((prev) => ({
+      ...prev,
+      case_resolved: value,
     }));
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Create update payload with only the fields that have values
-    const updatePayload = {};
-    Object.entries(activity).forEach(([key, value]) => {
-      if (value !== "" && value !== null && value !== undefined) {
-        updatePayload[key] = value;
-      }
-    });
-
     try {
-      const response = await fetch(`http://localhost:8000/activities/update/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatePayload)
-      });
+      const response = await fetch(
+        `http://localhost:8000/activities/update/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(activity),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update activity');
+        throw new Error(errorData.message || "Failed to update activity");
       }
 
-      router.push('/dashboard/activity');
+      router.push("/dashboard/activity");
       router.refresh();
     } catch (err) {
       console.error("Update error:", err);
@@ -176,21 +176,21 @@ export default function UpdateActivityPage({ params }) {
           </div>
 
           <div className="space-y-2">
-  <label className="text-sm font-medium">Case Status</label>
-  <Select
-    value={activity.case_status || ""} // Ensure "case_status" is used to store the state
-    onValueChange={handleCaseStatusChange} // Update the handler name
-  >
-    <SelectTrigger>
-      <SelectValue placeholder="Select status" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="Resolved">Resolved</SelectItem>
-      <SelectItem value="Not Resolved">Not Resolved</SelectItem>
-      <SelectItem value="Pending">Pending</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
+            <label className="text-sm font-medium">Case Status</label>
+            <Select
+              value={activity.case_resolved}
+              onValueChange={handleCaseStatusChange}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Resolved">Resolved</SelectItem>
+                <SelectItem value="Not Resolved">Not Resolved</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Next Follow-up Date</label>
