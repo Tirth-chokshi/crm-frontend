@@ -108,8 +108,8 @@ export default function ActivityView() {
         <div className="border-b pb-4">
           <h2 className="text-xl font-semibold text-gray-700">Resolution</h2>
           <p className="text-gray-600">
-            <strong>Case Resolved:</strong>{" "}
-            {activity.case_resolved ? "Yes" : "No"}
+            <strong>Case Resolved Status:</strong>{" "}
+            {activity.case_resolved}
           </p>
           <p className="text-gray-600">
             <strong>Resolution Details:</strong> {activity.resolution}
