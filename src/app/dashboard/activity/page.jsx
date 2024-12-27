@@ -20,15 +20,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useRouter } from "next/navigation"
-
-
+import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const ITEMS_PER_PAGE = 10
 
 export default function CRMActivityTable() {
   const router = useRouter()
 
   const [activities, setActivities] = useState([])
-
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
   const [sortConfig, setSortConfig] = useState(null)
@@ -82,12 +82,14 @@ export default function CRMActivityTable() {
       })
     : filteredActivities
 
-  const paginatedActivities = sortedActivities.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  )
+  // Pagination logic
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const paginatedActivities = filteredActivities.slice(indexOfFirstEntry, indexOfLastEntry);
 
-  const totalPages = Math.ceil(sortedActivities.length / ITEMS_PER_PAGE)
+  const totalPages = Math.ceil(filteredActivities.length / entriesPerPage);
+
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleNewActivity = () => {
     router.push("/dashboard/activity/new")
@@ -180,42 +182,46 @@ export default function CRMActivityTable() {
                 {activity.Status}
               </TableCell>
               <TableCell> 
-                <Button onClick={() => handleView(activity["Activity ID"])}
-                  style={{
-                    marginRight: '10px',
-                    right:"10px",
-                    cursor: "pointer",
-
-                  }}>View</Button>
-                <Button onClick={() => handleUpdate(activity["Activity ID"])}>Update</Button>
+               <div className="flex space-x-2 align-middle">
+                                       <button
+                                         onClick={() => handleView(activity["Activity ID"])}
+                                         className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
+                                       >
+                                         <FontAwesomeIcon icon={faEye} className="mr-2" />
+                                         
+                                       </button>
+                                       <button
+                                         onClick={() => handleUpdate(activity["Activity ID"])}
+                                         className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none"
+                                       >
+                                         <FontAwesomeIcon icon={faEdit} className="mr-2" />
+                                         
+                                       </button>
+                                      
+                                     </div>
                </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <div className="flex justify-between items-center mt-4">
-        <div>
-          Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
-          {Math.min(currentPage * ITEMS_PER_PAGE, sortedActivities.length)} of{" "}
-          {sortedActivities.length} activities
-        </div>
-        <div className="flex space-x-2">
-          <Button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+     {/* Pagination */}
+          <div className="flex justify-between items-center mt-4">
+            <Button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
     </div>
   )
 }

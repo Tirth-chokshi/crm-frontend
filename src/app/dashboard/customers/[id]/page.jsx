@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, Plus, Search } from 'lucide-react'
 export default function ViewCustomer() {
   const [customer, setCustomer] = useState(null);
   const [activities, setActivities] = useState([]);
@@ -30,6 +31,8 @@ export default function ViewCustomer() {
         setCustomerLoading(false);
       }
     };
+
+   
 
     const fetchActivities = async () => {
       try {
@@ -61,7 +64,9 @@ export default function ViewCustomer() {
   
   // Show error if customer doesn't exist
   if (!customer) return <div>Customer not found</div>;
-
+   const handleNewActivity = () => {
+    router.push("/dashboard/activity/new")
+  }
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Customer Details</h1>
@@ -91,7 +96,13 @@ export default function ViewCustomer() {
       </div>
 
       {/* Activities Section */}
-      <h2 className="text-xl font-semibold mt-6 mb-4">Activity Details</h2>
+      
+      <div className="flex items-center justify-between flex-wrap gap-4 mt-6 mb-4">
+  <h2 className="text-xl font-semibold">Activity Details</h2>
+  <Button onClick={handleNewActivity} className="flex items-center">
+    <Plus className="mr-2 h-4 w-4" /> New Activity
+  </Button>
+</div>
       <div className="border rounded-lg shadow-md p-4">
         {activitiesLoading ? (
           <div>Loading activities...</div>
