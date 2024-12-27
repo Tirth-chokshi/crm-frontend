@@ -61,11 +61,11 @@ const ActivityTable = ({ heading }) => {
       case "pending":
         return "bg-yellow-200 text-yellow-700";
       case "not resolved":
-        return "bg-red-200 text-black-700";
+        return "bg-red-200 text-red-700";
       case "resolved":
-        return "bg-green-200 text-black-700";
+        return "bg-green-200 text-green-700";
       default:
-        return "bg-gray-200 text-black-700";
+        return "bg-gray-200 text-gray-700";
     }
   };
 
