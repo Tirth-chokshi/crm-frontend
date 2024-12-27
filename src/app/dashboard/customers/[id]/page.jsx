@@ -32,8 +32,6 @@ export default function ViewCustomer() {
       }
     };
 
-   
-
     const fetchActivities = async () => {
       try {
         setActivitiesLoading(true);
@@ -64,8 +62,8 @@ export default function ViewCustomer() {
   
   // Show error if customer doesn't exist
   if (!customer) return <div>Customer not found</div>;
-   const handleNewActivity = () => {
-    router.push("/dashboard/activity/new")
+  const handleNewActivity = () => {
+    router.push(`/dashboard/customers/${id}/activity/new`);
   }
   return (
     <div className="container mx-auto p-6">

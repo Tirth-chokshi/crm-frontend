@@ -16,6 +16,7 @@ export default function Page() {
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [todaysFollowups, setTodaysFollowups] = useState(0);
   const [resolvedCases, setResolvedCases] = useState(0);
+  const [completedFollowups, setCompletedFollowups] = useState(0);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -53,14 +54,24 @@ export default function Page() {
         setTodaysFollowups(followups.length);
 
         // Fetch Resolved Cases
-        const resolvedResponse = await fetch(
+        const completedFollowupsResponse = await fetch(
           "http://localhost:8000/activities/resolved"
         );
-        if (!resolvedResponse.ok) {
+        if (!completedFollowupsResponse.ok) {
           throw new Error("Failed to fetch resolved cases");
         }
-        const data = await resolvedResponse.json();
-        const resolvedCount = data[0]?.resolved_count || 0; // Extract the resolved_count value
+        const data = await completedFollowupsResponse.json();
+        const completedCount = data[0]?.resolved_count || 0
+        setCompletedFollowups(completedCount); // Store the count in state
+
+        const resolvedCasesResponse = await fetch(
+          "http://localhost:8000/activities/todaysresolved"
+        );
+        if (!resolvedCasesResponse.ok) {
+          throw new Error("Failed to fetch resolved cases");
+        }
+        const resolvedCasesData = await resolvedCasesResponse.json();
+        const resolvedCount = resolvedCasesData[0]?.resolved_count || 0
         setResolvedCases(resolvedCount); // Store the count in state
       } catch (err) {
         console.error(err);
@@ -107,7 +118,7 @@ export default function Page() {
   <MetricCard
     title="Today's Follow-Up Sessions Completed"
     icon={<UserCheck className="h-8 w-8 text-orange-500" />}
-    metrics={[{ label: "Resolved", value: resolvedCases }]}
+    metrics={[{ label: "Completed", value: completedFollowups }]}
   />
   <MetricCard
     title="Total Cases Resolved"
