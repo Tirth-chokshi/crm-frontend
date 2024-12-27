@@ -1,5 +1,5 @@
-"use client"
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   BadgeCheck,
   Bell,
@@ -7,13 +7,13 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar"
+} from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,41 +22,31 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import React, { useState,useEffect } from 'react';
-import axios from 'axios';
+} from "@/components/ui/sidebar";
 
 export function NavUser() {
   const [adminProfile, setAdminProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
+
+  // Fetch admin profile
   useEffect(() => {
     const fetchAdminProfile = async () => {
       try {
-        // Get the token from wherever you're storing it (localStorage, cookies, etc.)
         const token = localStorage.getItem('token');
-
-        if (!token) {
-          throw new Error('No authentication token found');
-        }
+        if (!token) throw new Error('No authentication token found');
 
         const response = await axios.get('http://localhost:8000/admin/profile', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (response.data.admin) {
-          setAdminProfile(response.data.admin);
-        } else {
-          throw new Error('Invalid response format');
-        }
+        setAdminProfile(response.data.admin);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -66,6 +56,23 @@ export function NavUser() {
 
     fetchAdminProfile();
   }, []);
+
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post('/api/auth/logout');
+      if (response.data.success) {
+        localStorage.removeItem('token');
+        window.location.href = '/'; // Redirect to home or login page
+      } else {
+        throw new Error('Logout failed');
+      }
+    } catch (err) {
+      console.error('Error logging out:', err.message);
+    }
+  };
+
+  // Loading state
   if (loading) {
     return (
       <Card className="w-full max-w-md mx-auto">
@@ -79,6 +86,7 @@ export function NavUser() {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <Card className="w-full max-w-md mx-auto">
@@ -91,13 +99,13 @@ export function NavUser() {
       </Card>
     );
   }
-  
+
   return (
-    (<SidebarMenu>
+    <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-          <SidebarMenuButton
+            <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -115,7 +123,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={adminProfile.pictruePath} alt={adminProfile.username} />
+                  <AvatarImage src={adminProfile.picturePath} alt={adminProfile.username} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -132,13 +140,13 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
-    </SidebarMenu>)
+    </SidebarMenu>
   );
 }

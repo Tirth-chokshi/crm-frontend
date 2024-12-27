@@ -42,9 +42,18 @@ export const authService = {
       }
       
       const data = await response.json();
-      // Store the token in localStorage
+      
+      // Store token in both localStorage and cookie
       if (data.token) {
         localStorage.setItem('token', data.token);
+        // Set HTTP-only cookie
+        await fetch('/api/auth/set-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: data.token }),
+        });
       }
       
       return data;
@@ -53,8 +62,12 @@ export const authService = {
     }
   },
 
-  logout() {
+  async logout() {
     localStorage.removeItem('token');
+    // Clear the cookie
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+    });
   },
 
   getToken() {
