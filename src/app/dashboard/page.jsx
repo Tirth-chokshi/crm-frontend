@@ -93,23 +93,29 @@ export default function Page() {
         <div className="p-4 md:p-6 space-y-6">
           {/* Key Metrics Grid */}
           <section>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <MetricCard
-                title="Total Customers"
-                icon={<Users className="h-6 w-6 text-blue-500" />}
-                metrics={[{ label: "Customers", value: totalCustomers }]}
-              />
-              <MetricCard
-                title="Today's Follow-Up Session"
-                icon={<UserMinus className="h-6 w-6 text-purple-500" />}
-                metrics={[{ label: "Followups", value: todaysFollowups }]}
-              />
-              <MetricCard
-                title="Total Cases Resolved"
-                icon={<UserCheck className="h-6 w-6 text-orange-500" />}
-                metrics={[{ label: "Resolved", value: resolvedCases }]}
-              />
-            </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+  <MetricCard
+    title="Total Customers"
+    icon={<Users className="h-8 w-8 text-blue-500" />}
+    metrics={[{ label: "Customers", value: totalCustomers }]}
+  />
+  <MetricCard
+    title="Today's Follow-Up Sessions Remaining"
+    icon={<UserMinus className="h-8 w-8 text-purple-500" />}
+    metrics={[{ label: "Followups", value: todaysFollowups }]}
+  />
+  <MetricCard
+    title="Today's Follow-Up Sessions Completed"
+    icon={<UserCheck className="h-8 w-8 text-orange-500" />}
+    metrics={[{ label: "Resolved", value: resolvedCases }]}
+  />
+  <MetricCard
+    title="Total Cases Resolved"
+    icon={<UserCheck className="h-8 w-8 text-orange-500" />}
+    metrics={[{ label: "Resolved", value: resolvedCases }]}
+  />
+</div>
+
           </section>
           <section className="grid md:grid-cols-2 gap-4">
             <TodaysFollowup />

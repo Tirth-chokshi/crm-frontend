@@ -176,20 +176,20 @@ export default function DataTable() {
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>{customer.activity_status}</TableCell>
                     <TableCell>
-                      <div className="grid space-y-2">
+                      <div className="flex space-x-2 align-middle">
                         <button
                           onClick={() => handleView(customer.customer_id)}
                           className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
                         >
                           <FontAwesomeIcon icon={faEye} className="mr-2" />
-                          View
+                          
                         </button>
                         <button
                           onClick={() => handleUpdate(customer.customer_id)}
                           className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none"
                         >
                           <FontAwesomeIcon icon={faEdit} className="mr-2" />
-                          Update
+                          
                         </button>
                         <button
                           onClick={() => handleDelete(customer.customer_id)}
@@ -197,7 +197,7 @@ export default function DataTable() {
                           disabled={loading}
                         >
                           <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                          Delete
+                        
                         </button>
                       </div>
                     </TableCell>

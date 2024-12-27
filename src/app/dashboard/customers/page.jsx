@@ -21,7 +21,7 @@ export default function CustomerPage() {
 
   return (
    
-    <div className="space-y-6 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className=" space-y-6 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <h1 className="text-2xl font-bold ">Manage Customers</h1>
       <div style={{ position: "relative", bottom:"35px",  width: "100%" }}>
@@ -41,11 +41,7 @@ export default function CustomerPage() {
       cursor: "pointer",
 
       }}>+ Add Bulk Customer</Button>
-      
-       
-       
-        
-        <Button 
+      <Button 
         onClick={handleNewcust}
           style={{
       position: "absolute",
