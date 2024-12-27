@@ -66,7 +66,7 @@ const CaseStatusChart = () => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Case Resolution Status</CardTitle>
+            <CardTitle>Activity Resolution Status</CardTitle>
             <CardDescription>
               {format(dateFrom, 'MMMM d')} - {format(dateTo, 'MMMM d, yyyy')}
             </CardDescription>
@@ -136,7 +136,7 @@ const CaseStatusChart = () => {
                 stroke="var(--color-resolved)"
                 strokeWidth={2}
                 dot={false}
-                name="Resolved Cases"
+                name="Resolved Activites"
               />
               <Line
                 type="monotone"
@@ -144,7 +144,7 @@ const CaseStatusChart = () => {
                 stroke="var(--color-remaining)"
                 strokeWidth={2}
                 dot={false}
-                name="Remaining Cases"
+                name="Remaining Activites"
               />
             </LineChart>
           </ResponsiveContainer>

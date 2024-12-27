@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "./ui/button";
 import { Eye, Pencil, Trash } from 'lucide-react';
+import Link from "next/link";
 const ActivityTable = ({ heading }) => {
   const [activities, setActivities] = useState([]);
   const [search, setSearch] = useState("");
@@ -142,25 +143,24 @@ const ActivityTable = ({ heading }) => {
                   </Badge>
                 </TableCell>
                 <TableCell>
+                
                 <div className="flex space-x-2">
+                  <Link href={`/dashboard/activity/view/${activity.id}`}>
   <button
     className="flex items-center justify-center p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
     aria-label="View"
   >
     <Eye className="h-4 w-4" />
   </button>
+  </Link>
+  <Link href={`/dashboard/activity/update/${activity.id}`}>
   <button
     className="flex items-center justify-center p-2 text-white bg-yellow-500 rounded hover:bg-yellow-600"
     aria-label="Edit"
   >
     <Pencil className="h-4 w-4" />
   </button>
-  <button
-    className="flex items-center justify-center p-2 text-white bg-red-500 rounded hover:bg-red-600"
-    aria-label="Delete"
-  >
-    <Trash className="h-4 w-4" />
-  </button>
+  </Link>
 </div>
 
                 </TableCell>
