@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import TodaysFollowup from "@/components/TodaysFollowup";
 import TopCustomersChart from "@/components/TopCustomers";
 import ActivityTypeChart from "@/components/ActivityTypeChart";
+import ResolutionChart from "@/components/ResolutionChart";
 
 export default function Page() {
   const [loading, setLoading] = useState(true);
@@ -36,19 +37,25 @@ export default function Page() {
     const fetchCounts = async () => {
       try {
         // Fetch Customers
-        const customerResponse = await fetch("http://localhost:8000/customers/");
+        const customerResponse = await fetch(
+          "http://localhost:8000/customers/"
+        );
         if (!customerResponse.ok) throw new Error("Failed to fetch customers");
         const customers = await customerResponse.json();
         setTotalCustomers(customers.length);
 
         // Fetch Today's Followup
-        const followupResponse = await fetch("http://localhost:8000/activities/dailyfollowup");
+        const followupResponse = await fetch(
+          "http://localhost:8000/activities/dailyfollowup"
+        );
         if (!followupResponse.ok) throw new Error("Failed to fetch follow-ups");
         const followups = await followupResponse.json();
         setTodaysFollowups(followups.length);
 
         // Fetch Resolved Cases
-        const resolvedResponse = await fetch("http://localhost:8000/activities/resolved");
+        const resolvedResponse = await fetch(
+          "http://localhost:8000/activities/resolved"
+        );
         if (!resolvedResponse.ok) {
           throw new Error("Failed to fetch resolved cases");
         }
@@ -119,10 +126,10 @@ export default function Page() {
                 <MonthlyUsersChart />
               </div> */}
               <div className="border rounded-lg p-4 shadow-sm">
-                <TopCustomersChart/>
+                <ResolutionChart />
               </div>
               <div className="border rounded-lg p-4 shadow-sm">
-                <ActivityTypeChart/>
+                <ActivityTypeChart />
               </div>
               {/* <div className="border rounded-lg p-4 shadow-sm">
                 <MonthlyActivityChart />
