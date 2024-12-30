@@ -149,22 +149,15 @@ export default function ActivityView() {
       </div>
 
       {/* Back Button */}
-      <div className="mt-6 text-left">
+      <div className="mt-6 text-right">
         <Button
-          onClick={() => router.push(`/dashboard/customers/`)}
+          onClick={() => router.push(`/dashboard/customers/${activity.customer_id}`)}
           className="bg-blue-600 text-white hover:bg-blue-700"
         >
           Back to Customers 
         </Button>
       </div>
-      <div className="mt-6 text-right">
-        <Button
-          onClick={() => router.push("/dashboard/activity")}
-          className="bg-blue-600 text-white hover:bg-blue-700"
-        >
-          Back to Activities List 
-        </Button>
-      </div>
+   
     </div>
   );
 }
