@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import * as XLSX from "xlsx"
 import { AlertCircle, Upload, FileSpreadsheet } from 'lucide-react'
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import DownloadTemplateButton from "@/components/TemplateButton"
 
 export default function UploadExcelPage() {
   const [selectedFile, setSelectedFile] = useState(null)
@@ -155,6 +156,7 @@ export default function UploadExcelPage() {
             </>
           )}
         </Button>
+        <DownloadTemplateButton/>
       </div>
     </div>
   )

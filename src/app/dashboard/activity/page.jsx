@@ -177,14 +177,13 @@ export default function CRMActivityTable() {
       "Support Call": "bg-blue-100 text-blue-800",
       "Sales Call": "bg-blue-100 text-blue-800",
       "Follow-Up Call": "bg-yellow-100 text-yellow-800",
-      "Follow-Up": "bg-yellow-100 text-yellow-800",
-      Complaint: "bg-red-100 text-red-800",
+      "Complaint": "bg-red-100 text-red-800",
       "New Reg. User": "bg-green-100 text-green-800",
-      Support: "bg-green-100 text-green-800",
+      "Support": "bg-green-100 text-green-800",
       "Abandoned Cart Call": "bg-orange-100 text-orange-800",
       "Old Cust. Inactive": "bg-gray-100 text-gray-800",
       "Outbound Feedback": "bg-purple-100 text-purple-800",
-      Inquiry: "bg-purple-100 text-purple-800",
+      "Inquiry": "bg-purple-100 text-purple-800",
     }[type] || "bg-gray-100 text-gray-800");
 
   return (
