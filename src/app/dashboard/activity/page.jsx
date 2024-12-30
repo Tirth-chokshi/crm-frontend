@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { ChevronDown, ChevronUp, Plus, Search } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useEffect, useState } from "react";
+import { ChevronDown, ChevronUp, Plus, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -18,35 +18,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useRouter } from "next/navigation"
-import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Badge } from "@/components/ui/badge"
-const ITEMS_PER_PAGE = 10
+} from "@/components/ui/table";
+import { useRouter } from "next/navigation";
+import { faEye, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Badge } from "@/components/ui/badge";
+const ITEMS_PER_PAGE = 10;
 
 export default function CRMActivityTable() {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [activities, setActivities] = useState([])
+  const [activities, setActivities] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("All")
-  const [sortConfig, setSortConfig] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [sortConfig, setSortConfig] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await fetch("http://localhost:8000/activities/main")
-        const data = await response.json()
-        setActivities(data)
+        const response = await fetch("http://localhost:8000/activities/main");
+        const data = await response.json();
+        setActivities(data);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    fetchActivities()
-  },[])
+    };
+    fetchActivities();
+  }, []);
   const handleSort = (key) => {
     setSortConfig((prevConfig) => {
       if (prevConfig && prevConfig.key === key) {
@@ -54,50 +54,55 @@ export default function CRMActivityTable() {
           ...prevConfig,
           direction:
             prevConfig.direction === "ascending" ? "descending" : "ascending",
-        }
-        
+        };
       }
-      return { key, direction: "ascending" }
-    })
-  }
+      return { key, direction: "ascending" };
+    });
+  };
 
   const filteredActivities = activities
     .filter(
       (activity) =>
-        activity["Customer Name"].toLowerCase().includes(searchTerm.toLowerCase()) ||
-        activity["Activity Type"].toLowerCase().includes(searchTerm.toLowerCase())
+        activity["Customer Name"]
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        activity["Activity Type"]
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
     )
     .filter(
       (activity) => statusFilter === "All" || activity.Status === statusFilter
-    )
+    );
 
   const sortedActivities = sortConfig
     ? [...filteredActivities].sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1
+          return sortConfig.direction === "ascending" ? -1 : 1;
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1
+          return sortConfig.direction === "ascending" ? 1 : -1;
         }
-        return 0
+        return 0;
       })
-    : filteredActivities
+    : filteredActivities;
 
   // Pagination logic
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const paginatedActivities = filteredActivities.slice(indexOfFirstEntry, indexOfLastEntry);
+  const paginatedActivities = filteredActivities.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const totalPages = Math.ceil(filteredActivities.length / entriesPerPage);
 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleNewActivity = () => {
-    router.push("/dashboard/activity/new")
-  }
+    router.push("/dashboard/activity/new");
+  };
   const handleView = (activityId) => {
     router.push(`/dashboard/activity/view/${activityId}`);
-
   };
 
   // const handleUpdate = (activity_id) => {
@@ -155,28 +160,33 @@ export default function CRMActivityTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            {["Activity ID", "Customer Name", "Activity Type", "Date", "Status", "Updation"].map(
-              (header) => (
-                <TableHead
-                  key={header}
-                  className="cursor-pointer"
-                  onClick={() => handleSort(header)}
-                >
-                  <div className="flex items-center">
-                    {header}
-                    {sortConfig?.key === header && (
-                      <span className="ml-1">
-                        {sortConfig.direction === "ascending" ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </span>
-                    )}
-                  </div>
-                </TableHead>
-              )
-            )}
+            {[
+              "Activity ID",
+              "Customer Name",
+              "Activity Type",
+              "Date",
+              "Status",
+              "Updation",
+            ].map((header) => (
+              <TableHead
+                key={header}
+                className="cursor-pointer"
+                onClick={() => handleSort(header)}
+              >
+                <div className="flex items-center">
+                  {header}
+                  {sortConfig?.key === header && (
+                    <span className="ml-1">
+                      {sortConfig.direction === "ascending" ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </span>
+                  )}
+                </div>
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -184,58 +194,72 @@ export default function CRMActivityTable() {
             <TableRow key={activity["Activity ID"]}>
               <TableCell>{activity["Activity ID"]}</TableCell>
               <TableCell>{activity["Customer Name"]}</TableCell>
-              <TableCell>{activity["Activity Type"]}</TableCell>
-              <TableCell>{new Date(activity.Date).toLocaleString()}</TableCell>
               <TableCell>
                 <Badge
-                  className={getStatusBadgeStyle(activity.Status)}
+                  className={
+                    {
+                      "Support Call": "bg-blue-100 text-blue-800",
+                      "Sales Call": "bg-blue-100 text-blue-800",
+                      "Follow-Up Call": "bg-yellow-100 text-yellow-800",
+                      "Follow-Up": "bg-yellow-100 text-yellow-800",
+                      "Complaint": "bg-red-100 text-red-800",
+                      "New Reg. User": "bg-green-100 text-green-800",
+                      "Support": "bg-green-100 text-green-800",
+                      "Abandoned Cart Call": "bg-orange-100 text-orange-800",
+                      "Old Cust. Inactive": "bg-gray-100 text-gray-800",
+                      "Outbound Feedback": "bg-purple-100 text-purple-800",
+                      "Inquiry": "bg-purple-100 text-purple-800",
+                    }[activity["Activity Type"]] || "bg-gray-100 text-gray-800"
+                  }
                 >
+                  {activity["Activity Type"]}
+                </Badge>
+              </TableCell>
+              <TableCell>{new Date(activity.Date).toLocaleString()}</TableCell>
+              <TableCell>
+                <Badge className={getStatusBadgeStyle(activity.Status)}>
                   {activity.Status}
                 </Badge>
                 {/* {activity.Status} */}
               </TableCell>
-              <TableCell> 
-               <div className="flex space-x-2 align-middle">
-                                       <button
-                                         onClick={() => handleView(activity["Activity ID"])}
-                                         className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
-                                       >
-                                         <FontAwesomeIcon icon={faEye}  />
-                                         
-                                       </button>
-                                       <button
-                                         onClick={() => handleUpdate(activity["Activity ID"])}
-                                         className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none"
-                                       >
-                                         <FontAwesomeIcon icon={faEdit}  />
-                                         
-                                       </button>
-                                      
-                                     </div>
-               </TableCell>
+              <TableCell>
+                <div className="flex space-x-2 align-middle">
+                  <button
+                    onClick={() => handleView(activity["Activity ID"])}
+                    className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
+                  >
+                    <FontAwesomeIcon icon={faEye} />
+                  </button>
+                  <button
+                    onClick={() => handleUpdate(activity["Activity ID"])}
+                    className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none"
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-     {/* Pagination */}
-          <div className="flex justify-between items-center mt-4">
-            <Button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <Button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-4">
+        <Button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
     </div>
-  )
+  );
 }
-
