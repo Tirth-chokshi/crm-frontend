@@ -31,7 +31,7 @@ export default function CustomerPage() {
         style={{
       position: "absolute",
       top: "50%",
-      right: "250px",
+      right: "200px",
       transform: "translateY(-50%)",
       padding: "10px 20px",
       fontSize: "16px",
@@ -46,16 +46,17 @@ export default function CustomerPage() {
           style={{
       position: "absolute",
       top: "50%",
-      right: "20px",
+      
+      right: "30px",
       transform: "translateY(-50%)",
-      padding: "10px 20px",
+      
       fontSize: "16px",
       
       border: "none",
       borderRadius: "5px",
       cursor: "pointer",
 
-      }}>+ Add New Customer</Button>
+      }}>+  New Customer</Button>
       </div>
       <DataTable/>
     </div>

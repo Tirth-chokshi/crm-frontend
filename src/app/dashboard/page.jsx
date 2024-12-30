@@ -104,29 +104,30 @@ export default function Page() {
         <div className="p-4 md:p-6 space-y-6">
           {/* Key Metrics Grid */}
           <section>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-  <MetricCard
-    title="Total Customers"
-    icon={<Users className="h-8 w-8 text-blue-500" />}
-    metrics={[{ label: "Customers", value: totalCustomers }]}
-  />
-  <MetricCard
-    title="Today's Follow-Up Sessions Remaining"
-    icon={<UserMinus className="h-8 w-8 text-purple-500" />}
-    metrics={[{ label: "Followups", value: todaysFollowups }]}
-  />
-  <MetricCard
-    title="Today's Follow-Up Sessions Completed"
-    icon={<UserCheck className="h-8 w-8 text-orange-500" />}
-    metrics={[{ label: "Completed", value: completedFollowups }]}
-  />
-  <MetricCard
-    title="Total Cases Resolved"
-    icon={<UserCheck className="h-8 w-8 text-orange-500" />}
-    metrics={[{ label: "Resolved", value: resolvedCases }]}
-  />
-</div>
-
+          <div className="p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <MetricCard
+          title="Total Customers Registered"
+          icon={<Users className="h-8 w-8 text-blue-500" />}
+          metrics={[{ label: "Customers", value: totalCustomers }]}
+        />
+        <MetricCard
+          title="Today's Follow-Up Sessions Remaining"
+          icon={<UserMinus className="h-8 w-8 text-purple-500" />}
+          metrics={[{ label: "Followups", value: todaysFollowups }]}
+        />
+        <MetricCard
+          title="Today's Follow-Up Sessions Completed"
+          icon={<UserCheck className="h-8 w-8 text-orange-500" />}
+          metrics={[{ label: "Completed", value: completedFollowups }]}
+        />
+        <MetricCard
+          title="Total Cases/Query Resolved"
+          icon={<UserCheck className="h-8 w-8 text-green-500" />}
+          metrics={[{ label: "Resolved", value: resolvedCases }]}
+        />
+      </div>
+    </div>
           </section>
           <section className="grid md:grid-cols-2 gap-4">
             <TodaysFollowup />
@@ -136,21 +137,13 @@ export default function Page() {
           {/* Charts Section */}
           <section>
             <div className="space-y-6">
-              {/* <div className="border rounded-lg p-4 shadow-sm">
-                <MonthlySalesChart />
-              </div>
-              <div className="border rounded-lg p-4 shadow-sm">
-                <MonthlyUsersChart />
-              </div> */}
-              <div className="border rounded-lg p-4 shadow-sm">
+             
                 <ResolutionChart />
-              </div>
-              <div className="border rounded-lg p-4 shadow-sm">
+          
+            
                 <ActivityTypeChart />
-              </div>
-              {/* <div className="border rounded-lg p-4 shadow-sm">
-                <MonthlyActivityChart />
-              </div> */}
+             
+              
             </div>
           </section>
         </div>
@@ -163,16 +156,16 @@ function MetricCard({ title, icon, metrics }) {
   return (
     <div className="rounded-lg border text-card-foreground shadow-sm p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-3">
+        <div className="p-2 rounded-lg bg-gray-50">
           {icon}
-          <h3 className="text-lg font-semibold">{title}</h3>
+          <h3 className="text-lg font-semibold space-y-5">{title}</h3>
         </div>
       </div>
-      <div className="flex justify-between">
+      <div className="text-sm font-medium text-gray-600">
         {metrics.map((metric, index) => (
           <div key={index} className="text-center">
-            <div className="text-2xl font-bold">{metric.value}</div>
-            <div className="text-sm text-gray-500">{metric.label}</div>
+            <div className="text-2xl font-semibold">{metric.value}</div>
+            <div className="text-sm text-gray-600">{metric.label}</div>
           </div>
         ))}
       </div>
