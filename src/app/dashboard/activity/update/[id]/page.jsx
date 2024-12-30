@@ -69,6 +69,8 @@ const QUERY_TYPES = [
 
 const RESPONSE_TYPES = ["Positive", "Negative", "Neutral"];
 
+const CASE_RESOLUTION_TYPES = ["Pending", "Resolved", "Not Resolved"];
+
 export default function UpdateActivityPage() {
   const router = useRouter();
   const { id } = useParams();
@@ -339,6 +341,32 @@ export default function UpdateActivityPage() {
                     </FormControl>
                     <SelectContent>
                       {RESPONSE_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Case Resolution Status */}
+            <FormField
+              control={form.control}
+              name="case_resolved"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Case Resolution Status</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select resolution status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {CASE_RESOLUTION_TYPES.map((type) => (
                         <SelectItem key={type} value={type}>
                           {type}
                         </SelectItem>

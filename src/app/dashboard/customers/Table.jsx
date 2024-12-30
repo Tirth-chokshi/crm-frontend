@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -17,6 +16,13 @@ import {
   TableBody,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Search } from "lucide-react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -27,29 +33,35 @@ const columns = [
   "Name",
   "Mobile No",
   "Email",
+  "Activities",
   "Updation",
 ];
 
 export default function DataTable() {
   const [customers, setCustomers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState(""); // For filtering by activity_status
+  const [filterStatus, setFilterStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
 
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/customers/");
+      const data = await response.json();
+      setCustomers(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/customers/");
-        const data = await response.json();
-        setCustomers(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchCustomers();
   }, []);
 
@@ -57,19 +69,40 @@ export default function DataTable() {
     router.push(`/dashboard/customers/${customerId}`);
   };
 
-  const handleDelete = async (customerId) => {
+  const initiateDelete = (customerId) => {
+    setSelectedCustomerId(customerId);
+    setPassword("");
+    setPasswordError("");
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (password !== "Mytro") {
+      setPasswordError("Incorrect password");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:8000/customers/${customerId}`, {
+      const response = await fetch(`http://localhost:8000/customers/${selectedCustomerId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
         throw new Error('Failed to delete item');
       }
-      setCustomers((prevCustomers) =>
-        prevCustomers.filter((customer) => customer.customer_id !== customerId)
-      );
+      
+      // Close the dialog first
+      setDeleteDialogOpen(false);
+      
+      // Then update the state and refresh the data
+      await fetchCustomers();
+      
+      // Reset states
+      setSelectedCustomerId(null);
+      setPassword("");
+      setPasswordError("");
+      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -77,34 +110,36 @@ export default function DataTable() {
     }
   };
 
-  const handleUpdate = async (customerId) => {
+  const handleUpdate = (customerId) => {
     router.push(`/dashboard/customers/update/${customerId}`);
   };
 
-  // Filter customers based on search query and status
+  const handleCloseDialog = () => {
+    setDeleteDialogOpen(false);
+    setSelectedCustomerId(null);
+    setPassword("");
+    setPasswordError("");
+  };
+
   const filteredCustomers = customers.filter((customer) => {
     const matchesSearch =
       customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       customer.mobile.includes(searchQuery);
     const matchesFilter = filterStatus === "all" || filterStatus === ""
-      ? true // Show all when "all" or "" is selected
+      ? true
       : customer.activity_status === filterStatus;
     return matchesSearch && matchesFilter;
   });
-  
 
-  // Pagination logic
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = filteredCustomers.slice(indexOfFirstEntry, indexOfLastEntry);
-
   const totalPages = Math.ceil(filteredCustomers.length / entriesPerPage);
-
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <section>
+    <section className="relative">
       {/* Search and Controls */}
       <div className="rounded-lg border p-4 shadow-sm space-y-4 md:space-y-0 md:flex md:justify-between md:items-center">
         <div className="flex items-center gap-2">
@@ -126,20 +161,6 @@ export default function DataTable() {
         </div>
 
         <div className="flex gap-4 items-center">
-        <Select
-  value={filterStatus}
-  onValueChange={(value) => setFilterStatus(value)}
->
-  <SelectTrigger className="w-[150px]">
-    <SelectValue placeholder="Filter by status" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="all">All</SelectItem>
-    <SelectItem value="Active">Active</SelectItem>
-    <SelectItem value="Inactive">Inactive</SelectItem>
-  </SelectContent>
-</Select>
-
 
           <div className="relative flex-1 md:max-w-xs">
             <Input
@@ -173,30 +194,27 @@ export default function DataTable() {
                     <TableCell>{customer.name}</TableCell>
                     <TableCell>{customer.mobile}</TableCell>
                     <TableCell>{customer.email}</TableCell>
-                   
+                    <TableCell>{" "}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2 align-middle">
                         <button
                           onClick={() => handleView(customer.customer_id)}
                           className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
                         >
-                          <FontAwesomeIcon icon={faEye}  />
-                          
+                          <FontAwesomeIcon icon={faEye} />
                         </button>
                         <button
                           onClick={() => handleUpdate(customer.customer_id)}
                           className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none"
                         >
-                          <FontAwesomeIcon icon={faEdit}  />
-                          
+                          <FontAwesomeIcon icon={faEdit} />
                         </button>
                         <button
-                          onClick={() => handleDelete(customer.customer_id)}
+                          onClick={() => initiateDelete(customer.customer_id)}
                           className="flex items-center bg-red-500 text-white p-2 rounded-md hover:bg-red-600 focus:outline-none"
                           disabled={loading}
                         >
-                          <FontAwesomeIcon icon={faTrash}  />
-                        
+                          <FontAwesomeIcon icon={faTrash} />
                         </button>
                       </div>
                     </TableCell>
@@ -213,6 +231,44 @@ export default function DataTable() {
           </Table>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={handleCloseDialog}>
+        <DialogContent className="z-50">
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="mb-4">Are you sure you want to delete this customer? This action cannot be undone.</p>
+            <div className="space-y-2">
+              <Input
+                type="password"
+                placeholder="Enter password to confirm"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {passwordError && (
+                <p className="text-sm text-red-500">{passwordError}</p>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleCloseDialog}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={loading}
+            >
+              {loading ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
