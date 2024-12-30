@@ -96,7 +96,7 @@ export default function CRMActivityTable() {
   }
   const handleView = (activityId) => {
     router.push(`/dashboard/activity/view/${activityId}`);
-    console.log(customer);
+
   };
 
   // const handleUpdate = (activity_id) => {
@@ -187,14 +187,14 @@ export default function CRMActivityTable() {
                                          onClick={() => handleView(activity["Activity ID"])}
                                          className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
                                        >
-                                         <FontAwesomeIcon icon={faEye} className="mr-2" />
+                                         <FontAwesomeIcon icon={faEye}  />
                                          
                                        </button>
                                        <button
                                          onClick={() => handleUpdate(activity["Activity ID"])}
                                          className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none"
                                        >
-                                         <FontAwesomeIcon icon={faEdit} className="mr-2" />
+                                         <FontAwesomeIcon icon={faEdit}  />
                                          
                                        </button>
                                       

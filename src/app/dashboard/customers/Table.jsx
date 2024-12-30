@@ -26,9 +26,9 @@ const columns = [
   "ID",
   "Name",
   "Mobile No",
-  "E-mail",
-  "Activity Status",
-  "Action",
+ 
+  "Email",
+  "Updation",
 ];
 
 export default function DataTable() {
@@ -174,21 +174,21 @@ export default function DataTable() {
                     <TableCell>{customer.name}</TableCell>
                     <TableCell>{customer.mobile}</TableCell>
                     <TableCell>{customer.email}</TableCell>
-                    <TableCell>{customer.activity_status}</TableCell>
+                   
                     <TableCell>
                       <div className="flex space-x-2 align-middle">
                         <button
                           onClick={() => handleView(customer.customer_id)}
                           className="flex items-center bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
                         >
-                          <FontAwesomeIcon icon={faEye} className="mr-2" />
+                          <FontAwesomeIcon icon={faEye}  />
                           
                         </button>
                         <button
                           onClick={() => handleUpdate(customer.customer_id)}
                           className="flex items-center bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 focus:outline-none"
                         >
-                          <FontAwesomeIcon icon={faEdit} className="mr-2" />
+                          <FontAwesomeIcon icon={faEdit}  />
                           
                         </button>
                         <button
@@ -196,7 +196,7 @@ export default function DataTable() {
                           className="flex items-center bg-red-500 text-white p-2 rounded-md hover:bg-red-600 focus:outline-none"
                           disabled={loading}
                         >
-                          <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                          <FontAwesomeIcon icon={faTrash}  />
                         
                         </button>
                       </div>
