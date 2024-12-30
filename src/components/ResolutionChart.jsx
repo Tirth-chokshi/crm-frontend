@@ -132,7 +132,7 @@ const CaseStatusChart = () => {
               <Line
                 type="monotone"
                 dataKey="resolved_cases"
-                stroke="var(--color-resolved)"
+                stroke="#50e32b"
                 strokeWidth={2}
                 dot={false}
                 name="Resolved Activities"
@@ -140,7 +140,7 @@ const CaseStatusChart = () => {
               <Line
                 type="monotone"
                 dataKey="remaining_cases"
-                stroke="var(--color-remaining)"
+                stroke="#fa0011"
                 strokeWidth={2}
                 dot={false}
                 name="Remaining Activities"
@@ -152,11 +152,11 @@ const CaseStatusChart = () => {
       <CardFooter>
         <div className="flex items-center space-x-8">
           <div className="flex items-center space-x-2">
-            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: 'var(--color-resolved)' }}></div>
+            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: '#50e32b' }}></div>
             <span className="text-sm text-muted-foreground">Resolved Activities</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: 'var(--color-remaining)' }}></div>
+            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: '#fa0011' }}></div>
             <span className="text-sm text-muted-foreground">Remaining Activities</span>
           </div>
         </div>
