@@ -23,16 +23,30 @@ import { useRouter } from "next/navigation";
 import { faEye, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge } from "@/components/ui/badge";
-const ITEMS_PER_PAGE = 10;
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 
 export default function CRMActivityTable() {
   const router = useRouter();
 
   const [activities, setActivities] = useState([]);
-  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [sortConfig, setSortConfig] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentActivityId, setCurrentActivityId] = useState(null);
+
+  const [sortConfig, setSortConfig] = useState({
+    key: "Date",
+    direction: "descending",
+  }); // Default sort by date
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -40,78 +54,111 @@ export default function CRMActivityTable() {
       try {
         const response = await fetch("http://localhost:8000/activities/main");
         const data = await response.json();
-        setActivities(data);
+        // Sort activities by date immediately after fetching
+        const sortedData = [...data].sort(
+          (a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime()
+        );
+        setActivities(sortedData);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching activities:", error);
       }
     };
     fetchActivities();
   }, []);
+
+  const openDeleteDialog = (activityId) => {
+    setCurrentActivityId(activityId);
+    setIsDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/activities/delete/${currentActivityId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete the activity");
+      }
+      setActivities((prev) =>
+        prev.filter((activity) => activity["Activity ID"] !== currentActivityId)
+      );
+    } catch (error) {
+      console.error("Error deleting activity:", error);
+    } finally {
+      setIsDialogOpen(false);
+      setCurrentActivityId(null);
+    }
+  };
+
   const handleSort = (key) => {
     setSortConfig((prevConfig) => {
-      if (prevConfig && prevConfig.key === key) {
-        return {
-          ...prevConfig,
-          direction:
-            prevConfig.direction === "ascending" ? "descending" : "ascending",
-        };
-      }
-      return { key, direction: "ascending" };
+      const newDirection =
+        prevConfig.key === key && prevConfig.direction === "ascending"
+          ? "descending"
+          : "ascending";
+      return { key, direction: newDirection };
     });
   };
 
-  const filteredActivities = activities
-    .filter(
-      (activity) =>
-        activity["Customer Name"]
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        activity["Activity Type"]
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-    )
-    .filter(
-      (activity) => statusFilter === "All" || activity.Status === statusFilter
-    );
+  // Improved filtering logic
+  const filteredActivities = activities.filter((activity) => {
+    const matchesSearch =
+      searchTerm === "" ||
+      Object.values(activity).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
-  const sortedActivities = sortConfig
-    ? [...filteredActivities].sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
-      })
-    : filteredActivities;
+    const matchesStatus =
+      statusFilter === "All" ||
+      activity.Status.toLowerCase() === statusFilter.toLowerCase();
+
+    return matchesSearch && matchesStatus;
+  });
+
+  // Improved sorting logic
+  const sortedActivities = [...filteredActivities].sort((a, b) => {
+    const aValue =
+      sortConfig.key === "Date"
+        ? new Date(a[sortConfig.key]).getTime()
+        : a[sortConfig.key];
+    const bValue =
+      sortConfig.key === "Date"
+        ? new Date(b[sortConfig.key]).getTime()
+        : b[sortConfig.key];
+
+    if (aValue < bValue) return sortConfig.direction === "ascending" ? -1 : 1;
+    if (aValue > bValue) return sortConfig.direction === "ascending" ? 1 : -1;
+    return 0;
+  });
 
   // Pagination logic
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const paginatedActivities = filteredActivities.slice(
+  const paginatedActivities = sortedActivities.slice(
     indexOfFirstEntry,
     indexOfLastEntry
   );
+  const totalPages = Math.ceil(sortedActivities.length / entriesPerPage);
 
-  const totalPages = Math.ceil(filteredActivities.length / entriesPerPage);
-
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   const handleNewActivity = () => {
     router.push("/dashboard/activity/new");
   };
+
   const handleView = (activityId) => {
     router.push(`/dashboard/activity/view/${activityId}`);
   };
 
-  // const handleUpdate = (activity_id) => {
-  //   router.push(`/update/${activity_id}`);
-  // };
   const handleUpdate = (activityId) => {
-    console.log("Activity ID being passed:", activityId);
     router.push(`/dashboard/activity/update/${activityId}`);
   };
+
   const getStatusBadgeStyle = (status) => {
     switch (status.toLowerCase()) {
       case "pending":
@@ -124,6 +171,21 @@ export default function CRMActivityTable() {
         return "bg-gray-200 text-gray-700";
     }
   };
+
+  const getActivityTypeBadgeStyle = (type) =>
+    ({
+      "Support Call": "bg-blue-100 text-blue-800",
+      "Sales Call": "bg-blue-100 text-blue-800",
+      "Follow-Up Call": "bg-yellow-100 text-yellow-800",
+      "Follow-Up": "bg-yellow-100 text-yellow-800",
+      Complaint: "bg-red-100 text-red-800",
+      "New Reg. User": "bg-green-100 text-green-800",
+      Support: "bg-green-100 text-green-800",
+      "Abandoned Cart Call": "bg-orange-100 text-orange-800",
+      "Old Cust. Inactive": "bg-gray-100 text-gray-800",
+      "Outbound Feedback": "bg-purple-100 text-purple-800",
+      Inquiry: "bg-purple-100 text-purple-800",
+    }[type] || "bg-gray-100 text-gray-800");
 
   return (
     <div className="container mx-auto p-6">
@@ -138,12 +200,18 @@ export default function CRMActivityTable() {
           <Input
             placeholder="Search activities..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1); // Reset to first page on search
+            }}
             className="w-64"
           />
           <Select
             value={statusFilter}
-            onValueChange={(value) => setStatusFilter(value)}
+            onValueChange={(value) => {
+              setStatusFilter(value);
+              setCurrentPage(1); // Reset to first page on filter change
+            }}
           >
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Filter by status" />
@@ -166,7 +234,7 @@ export default function CRMActivityTable() {
               "Activity Type",
               "Date",
               "Status",
-              "Updation",
+              "Actions",
             ].map((header) => (
               <TableHead
                 key={header}
@@ -196,21 +264,9 @@ export default function CRMActivityTable() {
               <TableCell>{activity["Customer Name"]}</TableCell>
               <TableCell>
                 <Badge
-                  className={
-                    {
-                      "Support Call": "bg-blue-100 text-blue-800",
-                      "Sales Call": "bg-blue-100 text-blue-800",
-                      "Follow-Up Call": "bg-yellow-100 text-yellow-800",
-                      "Follow-Up": "bg-yellow-100 text-yellow-800",
-                      "Complaint": "bg-red-100 text-red-800",
-                      "New Reg. User": "bg-green-100 text-green-800",
-                      "Support": "bg-green-100 text-green-800",
-                      "Abandoned Cart Call": "bg-orange-100 text-orange-800",
-                      "Old Cust. Inactive": "bg-gray-100 text-gray-800",
-                      "Outbound Feedback": "bg-purple-100 text-purple-800",
-                      "Inquiry": "bg-purple-100 text-purple-800",
-                    }[activity["Activity Type"]] || "bg-gray-100 text-gray-800"
-                  }
+                  className={getActivityTypeBadgeStyle(
+                    activity["Activity Type"]
+                  )}
                 >
                   {activity["Activity Type"]}
                 </Badge>
@@ -220,7 +276,6 @@ export default function CRMActivityTable() {
                 <Badge className={getStatusBadgeStyle(activity.Status)}>
                   {activity.Status}
                 </Badge>
-                {/* {activity.Status} */}
               </TableCell>
               <TableCell>
                 <div className="flex space-x-2 align-middle">
@@ -236,13 +291,44 @@ export default function CRMActivityTable() {
                   >
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
+                  <button
+                    onClick={() => openDeleteDialog(activity["Activity ID"])}
+                    className="flex items-center bg-red-500 text-white p-2 rounded-md hover:bg-red-600 focus:outline-none"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                        <DialogDescription>
+                          Are you sure you want to delete this activity? This
+                          action cannot be undone.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <button
+                          onClick={() => setIsDialogOpen(false)}
+                          className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleDelete}
+                          className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                        >
+                          Delete
+                        </button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
         <Button
           onClick={() => handlePageChange(currentPage - 1)}

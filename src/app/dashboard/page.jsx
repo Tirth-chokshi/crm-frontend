@@ -14,9 +14,9 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCustomers, setTotalCustomers] = useState(0);
-  const [todaysFollowups, setTodaysFollowups] = useState(0);
+  const [todaysActivities, setTodaysActivities] = useState(0);
   const [resolvedCases, setResolvedCases] = useState(0);
-  const [completedFollowups, setCompletedFollowups] = useState(0);
+  const [pendingFollowups, setPendingFollowups] = useState(0);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -38,32 +38,22 @@ export default function Page() {
     const fetchCounts = async () => {
       try {
         // Fetch Customers
-        const customerResponse = await fetch(
-          "http://localhost:8000/customers/"
-        );
+        const customerResponse = await fetch("http://localhost:8000/customers/");
         if (!customerResponse.ok) throw new Error("Failed to fetch customers");
         const customers = await customerResponse.json();
         setTotalCustomers(customers.length);
 
-        // Fetch Today's Followup
-        const followupResponse = await fetch(
+        // Fetch Today's Activities
+        const todaysActivitiesResponse = await fetch(
           "http://localhost:8000/activities/dailyfollowup"
         );
-        if (!followupResponse.ok) throw new Error("Failed to fetch follow-ups");
-        const followups = await followupResponse.json();
-        setTodaysFollowups(followups.length);
-
-        // Fetch Resolved Cases
-        const completedFollowupsResponse = await fetch(
-          "http://localhost:8000/activities/resolved"
-        );
-        if (!completedFollowupsResponse.ok) {
-          throw new Error("Failed to fetch resolved cases");
+        if (!todaysActivitiesResponse.ok) {
+          throw new Error("Failed to fetch today's activities");
         }
-        const data = await completedFollowupsResponse.json();
-        const completedCount = data[0]?.resolved_count || 0
-        setCompletedFollowups(completedCount); // Store the count in state
+        const todaysActivitiesData = await todaysActivitiesResponse.json();
+        setTodaysActivities(todaysActivitiesData.length);
 
+        // Fetch Today's Resolved Activities
         const resolvedCasesResponse = await fetch(
           "http://localhost:8000/activities/todaysresolved"
         );
@@ -71,8 +61,17 @@ export default function Page() {
           throw new Error("Failed to fetch resolved cases");
         }
         const resolvedCasesData = await resolvedCasesResponse.json();
-        const resolvedCount = resolvedCasesData[0]?.resolved_count || 0
-        setResolvedCases(resolvedCount); // Store the count in state
+        setResolvedCases(resolvedCasesData[0]?.resolved_count || 0);
+
+        // Fetch Today's Pending Follow-ups
+        const pendingFollowupsResponse = await fetch(
+          "http://localhost:8000/activities/remaining"
+        );
+        if (!pendingFollowupsResponse.ok) {
+          throw new Error("Failed to fetch pending followups");
+        }
+        const pendingFollowupsData = await pendingFollowupsResponse.json();
+        setPendingFollowups(pendingFollowupsData[0]?.remaining_count || 0);
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -104,30 +103,30 @@ export default function Page() {
         <div className="p-4 md:p-6 space-y-6">
           {/* Key Metrics Grid */}
           <section>
-          <div className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard
-          title="Total Customers Registered"
-          icon={<Users className="h-8 w-8 text-blue-500" />}
-          metrics={[{ label: "Customers", value: totalCustomers }]}
-        />
-        <MetricCard
-          title="Today's Follow-Up Sessions Remaining"
-          icon={<UserMinus className="h-8 w-8 text-purple-500" />}
-          metrics={[{ label: "Followups", value: todaysFollowups }]}
-        />
-        <MetricCard
-          title="Today's Follow-Up Sessions Completed"
-          icon={<UserCheck className="h-8 w-8 text-orange-500" />}
-          metrics={[{ label: "Completed", value: completedFollowups }]}
-        />
-        <MetricCard
-          title="Total Cases/Query Resolved"
-          icon={<UserCheck className="h-8 w-8 text-green-500" />}
-          metrics={[{ label: "Resolved", value: resolvedCases }]}
-        />
-      </div>
-    </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard
+                  title="Total Customers Registered"
+                  icon={<Users className="h-8 w-8 text-blue-500" />}
+                  metrics={[{ label: "Customers", value: totalCustomers }]}
+                />
+                <MetricCard
+                  title="Today's Activities"
+                  icon={<UserMinus className="h-8 w-8 text-purple-500" />}
+                  metrics={[{ label: "Activities", value: todaysActivities }]}
+                />
+                <MetricCard
+                  title="Today's Resolved Activities"
+                  icon={<UserCheck className="h-8 w-8 text-green-500" />}
+                  metrics={[{ label: "Resolved", value: resolvedCases }]}
+                />
+                <MetricCard
+                  title="Today's Pending Follow-ups"
+                  icon={<UserCheck className="h-8 w-8 text-orange-500" />}
+                  metrics={[{ label: "Pending", value: pendingFollowups }]}
+                />
+              </div>
+            </div>
           </section>
           <section className="grid md:grid-cols-2 gap-4">
             <TodaysFollowup />
@@ -137,13 +136,8 @@ export default function Page() {
           {/* Charts Section */}
           <section>
             <div className="space-y-6">
-             
-                <ResolutionChart />
-          
-            
-                <ActivityTypeChart />
-             
-              
+              <ResolutionChart />
+              <ActivityTypeChart />
             </div>
           </section>
         </div>
