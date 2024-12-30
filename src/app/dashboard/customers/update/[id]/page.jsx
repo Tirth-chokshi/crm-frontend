@@ -110,7 +110,7 @@ export default function UpdateCustomerPage({ params }) {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Name</label>
+            <label className="text-sm font-medium">Name*</label>
             <Input
               name="name"
               value={customer.name}
@@ -121,7 +121,7 @@ export default function UpdateCustomerPage({ params }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Email</label>
+            <label className="text-sm font-medium">Email*</label>
             <Input
               name="email"
               type="email"
@@ -133,7 +133,7 @@ export default function UpdateCustomerPage({ params }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Mobile Number</label>
+            <label className="text-sm font-medium">Mobile Number*</label>
             <Input
               name="mobile"
               value={customer.mobile}
@@ -144,7 +144,7 @@ export default function UpdateCustomerPage({ params }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Activity Status</label>
+            <label className="text-sm font-medium">Activity Status*</label>
             <Select
               value={customer.activity_status}
               onValueChange={handleStatusChange}
@@ -159,7 +159,9 @@ export default function UpdateCustomerPage({ params }) {
               </SelectContent>
             </Select>
           </div>
-
+<div>
+  * denotes Mandatory
+</div>
           <div className="flex gap-4">
             <Button
               type="submit"

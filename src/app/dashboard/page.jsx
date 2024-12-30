@@ -148,21 +148,37 @@ export default function Page() {
 
 function MetricCard({ title, icon, metrics }) {
   return (
-    <div className="rounded-lg border text-card-foreground shadow-sm p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-4">
+    <div className="rounded-lg border text-card-foreground shadow-sm hover:shadow-md transition-shadow">
+    {/* Fixed height container with consistent padding */}
+    <div className="h-[200px] p-6 flex flex-col">
+      {/* Header section - Takes up top 40% of space */}
+      <div className="flex items-center gap-3 mb-6">
         <div className="p-2 rounded-lg">
           {icon}
-          <h3 className="text-lg font-semibold space-y-5">{title}</h3>
         </div>
+        <h3 className="text-lg font-semibold line-clamp-2">{title}</h3>
       </div>
-      <div className="text-sm font-medium text-gray-600">
+      
+      {/* Metrics section - Takes up bottom 60% of space */}
+      <div className="flex-1 flex flex-col items-center justify-center">
         {metrics.map((metric, index) => (
           <div key={index} className="text-center">
-            <div className="text-2xl font-semibold">{metric.value}</div>
-            <div className="text-sm text-gray-600">{metric.label}</div>
+            {/* Fixed size container for value to prevent layout shift */}
+            <div className="h-12 flex items-center justify-center">
+              <span className="text-3xl font-bold text-gray-900">
+                {metric.value}
+              </span>
+            </div>
+            {/* Fixed size container for label to prevent layout shift */}
+            <div className="h-6 flex items-center justify-center">
+              <span className="text-sm text-gray-600">
+                {metric.label}
+              </span>
+            </div>
           </div>
         ))}
       </div>
     </div>
+  </div>
   );
 }

@@ -26,6 +26,8 @@ export default function ActivityTypeChart() {
     fetchActivityTypeData();
   }, []);
 
+  const totalActivities = data.reduce((sum, item) => sum + item.total_activities, 0);
+
   if (error) {
     return (
       <Card>
@@ -45,27 +47,65 @@ export default function ActivityTypeChart() {
         <CardTitle>Activity Type Distribution</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="total_activities"
-              nameKey="activity_type"
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Left side: Table and Total */}
+          <div className="w-full md:w-1/3">
+            <div className="mb-4">
+            <div className="mt-4 p-3">
+                <p className="font-semibold mb-4">Total Activities: {totalActivities}</p>
+              </div>
+              <h3 className="text-lg mt-2 from-neutral-300 mb-2">Activity Details</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="border p-2 text-left">Type</th>
+                      <th className="border p-2 text-right">Count</th>
+                      <th className="border p-2 text-right">%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.map((item, index) => (
+                      <tr key={index}>
+                        <td className="border p-2">{item.activity_type}</td>
+                        <td className="border p-2 text-right">{item.total_activities}</td>
+                        <td className="border p-2 text-right">
+                          {((item.total_activities / totalActivities) * 100).toFixed(1)}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+             
+            </div>
+          </div>
+
+          {/* Right side: Pie Chart */}
+          <div className="w-full md:w-2/3">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="total_activities"
+                  nameKey="activity_type"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

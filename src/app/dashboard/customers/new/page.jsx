@@ -66,18 +66,18 @@ export default function FormComponent() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "500px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Fill up the Customers Details</h1>
+      <h1 style={{ textAlign: "center", marginBottom: "20px" , fontSize: "30px"}}>New Customer</h1>
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         {/* ID Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label htmlFor="id" style={{ marginBottom: "5px" }}>Customer ID:</label>
+          <label htmlFor="id" style={{ marginBottom: "5px" }}>Customer ID *:</label>
           <input
             type="number"
             id="id"
             name="id"
             value={formData.id}
             onChange={handleChange}
-            placeholder="(optional)"
+            
             // required
             style={{ padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "5px" }}
           />
@@ -85,7 +85,7 @@ export default function FormComponent() {
 
         {/* Name Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label htmlFor="name" style={{ marginBottom: "5px" }}>Name:</label>
+          <label htmlFor="name" style={{ marginBottom: "5px" }}>Name*:</label>
           <input
             type="text"
             id="name"
@@ -100,7 +100,7 @@ export default function FormComponent() {
 
         {/* Mobile Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label htmlFor="mobile" style={{ marginBottom: "5px" }}>Mobile No:</label>
+          <label htmlFor="mobile" style={{ marginBottom: "5px" }}>Mobile No*:</label>
           <input
             type="tel"
             id="mobile"
@@ -116,7 +116,7 @@ export default function FormComponent() {
 
         {/* Email Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label htmlFor="email" style={{ marginBottom: "5px" }}>Email:</label>
+          <label htmlFor="email" style={{ marginBottom: "5px" }}>Email*:</label>
           <input
             type="email"
             id="email"
@@ -128,7 +128,9 @@ export default function FormComponent() {
             style={{ padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "5px" }}
           />
         </div>
-
+        <div>
+          * denotes Mandatory
+        </div>
         {/* Submit Button */}
         <Button
           type="submit"

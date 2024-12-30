@@ -160,7 +160,7 @@ const CreateActivityForm = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-8  rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-8 text-center">Create New Activity</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center"> New Activity</h1>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -171,7 +171,7 @@ const CreateActivityForm = () => {
               name="customer_id"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Customer</FormLabel>
+                  <FormLabel>Customer*</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
@@ -217,7 +217,7 @@ const CreateActivityForm = () => {
               name="activity_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Activity Date</FormLabel>
+                  <FormLabel>Activity Date*</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button variant="outline" className="w-full">
@@ -244,7 +244,7 @@ const CreateActivityForm = () => {
               name="activity_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Activity Type</FormLabel>
+                  <FormLabel>Activity Type*</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -273,7 +273,7 @@ const CreateActivityForm = () => {
               name="query"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Query Type</FormLabel>
+                  <FormLabel>Query Type*</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -299,7 +299,7 @@ const CreateActivityForm = () => {
               name="customer_response"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Customer Response</FormLabel>
+                  <FormLabel>Customer Response*</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -325,7 +325,7 @@ const CreateActivityForm = () => {
               name="overall_response"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Overall Response</FormLabel>
+                  <FormLabel>Overall Response*</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -351,7 +351,7 @@ const CreateActivityForm = () => {
               name="comments"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Comments</FormLabel>
+                  <FormLabel>Comments*</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
@@ -430,9 +430,11 @@ const CreateActivityForm = () => {
               />
             )}
           </div>
-
+<div>
+  * denotes Mandatory
+</div>
           <Button type="submit" className="w-full">
-            Create Activity
+            Save
           </Button>
         </form>
       </Form>
