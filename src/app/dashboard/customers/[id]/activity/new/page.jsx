@@ -171,18 +171,18 @@ const CustomerActivityForm = () => {
       
       {customer && (
         <div className="mb-8 p-6 border rounded-lg bg-gray-50">
-          <h2 className="text-xl font-semibold mb-4">Customer Details*</h2>
+          <h2 className="text-xl font-semibold mb-4">Customer Details<span className='text-red-700'>*</span></h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <p className="text-sm text-gray-500">Name*</p>
+              <p className="text-sm text-gray-500">Name<span className='text-red-700'>*</span></p>
               <p className="font-medium">{customer.name}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Email*</p>
+              <p className="text-sm text-gray-500">Email<span className='text-red-700'>*</span></p>
               <p className="font-medium">{customer.email}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Mobile*</p>
+              <p className="text-sm text-gray-500">Mobile<span className='text-red-700'>*</span></p>
               <p className="font-medium">{customer.mobile}</p>
             </div>
           </div>
@@ -198,7 +198,7 @@ const CustomerActivityForm = () => {
               name="activity_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Activity Date*</FormLabel>
+                  <FormLabel>Activity Date<span className='text-red-700'>*</span></FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button variant="outline" className="w-full justify-start">
@@ -225,7 +225,7 @@ const CustomerActivityForm = () => {
               name="activity_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Activity Type*</FormLabel>
+                  <FormLabel>Activity Type<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -251,7 +251,7 @@ const CustomerActivityForm = () => {
               name="query"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Query Type*</FormLabel>
+                  <FormLabel>Query Type<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -277,7 +277,7 @@ const CustomerActivityForm = () => {
               name="customer_response"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Customer Response*</FormLabel>
+                  <FormLabel>Customer Response<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -307,7 +307,7 @@ const CustomerActivityForm = () => {
               name="overall_response"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Overall Response*</FormLabel>
+                  <FormLabel>Overall Response<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -337,7 +337,7 @@ const CustomerActivityForm = () => {
               name="case_resolved"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Case Status*</FormLabel>
+                  <FormLabel>Case Status<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -363,7 +363,7 @@ const CustomerActivityForm = () => {
               name="comments"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Comments*</FormLabel>
+                  <FormLabel>Comments<span className='text-red-700'>*</span></FormLabel>
                   <FormControl>
                     <Textarea 
                       {...field} 
@@ -443,7 +443,7 @@ const CustomerActivityForm = () => {
             )}
           </div>
 <div>
-  * denotes Mandatory
+<span className='text-red-700'>*</span>denotes Mandatory
 </div>
           <div className="flex gap-4 justify-end pt-4">
             <Button 
@@ -453,7 +453,7 @@ const CustomerActivityForm = () => {
             >
               Cancel
             </Button>
-            <Button type="submit">Create Activity</Button>
+            <Button type="submit">Save</Button>
           </div>
         </form>
       </Form>

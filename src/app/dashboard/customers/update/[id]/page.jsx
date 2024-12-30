@@ -110,7 +110,7 @@ export default function UpdateCustomerPage({ params }) {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Name*</label>
+            <label className="text-sm font-medium">Name<span className='text-red-700'>*</span></label>
             <Input
               name="name"
               value={customer.name}
@@ -121,7 +121,7 @@ export default function UpdateCustomerPage({ params }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Email*</label>
+            <label className="text-sm font-medium">Email<span className='text-red-700'>*</span></label>
             <Input
               name="email"
               type="email"
@@ -133,7 +133,7 @@ export default function UpdateCustomerPage({ params }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Mobile Number*</label>
+            <label className="text-sm font-medium">Mobile Number<span className='text-red-700'>*</span></label>
             <Input
               name="mobile"
               value={customer.mobile}
@@ -144,7 +144,7 @@ export default function UpdateCustomerPage({ params }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Activity Status*</label>
+            <label className="text-sm font-medium">Activity Status<span className='text-red-700'>*</span></label>
             <Select
               value={customer.activity_status}
               onValueChange={handleStatusChange}
@@ -160,7 +160,7 @@ export default function UpdateCustomerPage({ params }) {
             </Select>
           </div>
 <div>
-  * denotes Mandatory
+<span className='text-red-700'>*</span> denotes Mandatory
 </div>
           <div className="flex gap-4">
             <Button
@@ -169,7 +169,7 @@ export default function UpdateCustomerPage({ params }) {
               className="w-full"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Update Customer
+              Save
             </Button>
             <Button
               type="button"

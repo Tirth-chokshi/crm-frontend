@@ -212,7 +212,7 @@ export default function UpdateActivityPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Customer Info (Read-only) */}
             <FormItem className="col-span-2">
-              <FormLabel>Customer</FormLabel>
+              <FormLabel>Customer<span className='text-red-700'>*</span></FormLabel>
               <Input
                 type="text"
                 value={selectedCustomerName}
@@ -227,7 +227,7 @@ export default function UpdateActivityPage() {
               name="activity_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Activity Date</FormLabel>
+                  <FormLabel>Activity Date<span className='text-red-700'>*</span></FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button variant="outline" className="w-full">
@@ -254,7 +254,7 @@ export default function UpdateActivityPage() {
               name="activity_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Activity Type</FormLabel>
+                  <FormLabel>Activity Type<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -280,7 +280,7 @@ export default function UpdateActivityPage() {
               name="query"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Query Type</FormLabel>
+                  <FormLabel>Query Type<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -306,7 +306,7 @@ export default function UpdateActivityPage() {
               name="customer_response"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Customer Response</FormLabel>
+                  <FormLabel>Customer Response<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -332,7 +332,7 @@ export default function UpdateActivityPage() {
               name="overall_response"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Overall Response</FormLabel>
+                  <FormLabel>Overall Response<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -358,7 +358,7 @@ export default function UpdateActivityPage() {
               name="case_resolved"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Case Resolution Status</FormLabel>
+                  <FormLabel>Case Resolution Status<span className='text-red-700'>*</span></FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -384,7 +384,7 @@ export default function UpdateActivityPage() {
               name="comments"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Comments</FormLabel>
+                  <FormLabel>Comments<span className='text-red-700'>*</span></FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
@@ -432,7 +432,9 @@ export default function UpdateActivityPage() {
                 </label>
               </div>
             </FormItem>
-
+<div>
+<span className='text-red-700'>* denotes Mandatory</span>
+</div>
             {/* Next Follow-up Date */}
             {enableFollowup && (
               <FormField
@@ -467,7 +469,7 @@ export default function UpdateActivityPage() {
           <div className="flex gap-4">
             <Button type="submit" className="flex-1" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Update Activity
+              Save
             </Button>
             <Button
               type="button"
