@@ -39,6 +39,7 @@ const columns = [
 
 export default function DataTable() {
   const [customers, setCustomers] = useState([]);
+  const [customerActivities, setCustomerActivities] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,8 +57,30 @@ export default function DataTable() {
       const response = await fetch("http://localhost:8000/customers/");
       const data = await response.json();
       setCustomers(data);
+      
+      // Fetch activities count for each customer
+      data.forEach(customer => {
+        fetchCustomerActivities(customer.customer_id);
+      });
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const fetchCustomerActivities = async (customerId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/activities/customer/${customerId}`);
+      const data = await response.json();
+      setCustomerActivities(prev => ({
+        ...prev,
+        [customerId]: data.length
+      }));
+    } catch (error) {
+      console.log(error);
+      setCustomerActivities(prev => ({
+        ...prev,
+        [customerId]: 0
+      }));
     }
   };
 
@@ -65,6 +88,7 @@ export default function DataTable() {
     fetchCustomers();
   }, []);
 
+  // Rest of the existing functions remain the same...
   const handleView = (customerId) => {
     router.push(`/dashboard/customers/${customerId}`);
   };
@@ -92,13 +116,8 @@ export default function DataTable() {
         throw new Error('Failed to delete item');
       }
       
-      // Close the dialog first
       setDeleteDialogOpen(false);
-      
-      // Then update the state and refresh the data
       await fetchCustomers();
-      
-      // Reset states
       setSelectedCustomerId(null);
       setPassword("");
       setPasswordError("");
@@ -140,7 +159,7 @@ export default function DataTable() {
 
   return (
     <section className="relative">
-      {/* Search and Controls */}
+      {/* Search and Controls section remains the same... */}
       <div className="rounded-lg border p-4 shadow-sm space-y-4 md:space-y-0 md:flex md:justify-between md:items-center">
         <div className="flex items-center gap-2">
           <span className="text-sm">Show</span>
@@ -161,7 +180,6 @@ export default function DataTable() {
         </div>
 
         <div className="flex gap-4 items-center">
-
           <div className="relative flex-1 md:max-w-xs">
             <Input
               type="search"
@@ -194,7 +212,9 @@ export default function DataTable() {
                     <TableCell>{customer.name}</TableCell>
                     <TableCell>{customer.mobile}</TableCell>
                     <TableCell>{customer.email}</TableCell>
-                    <TableCell>{" "}</TableCell>
+                    <TableCell>
+                      {customerActivities[customer.customer_id] || 0}
+                    </TableCell>
                     <TableCell>
                       <div className="flex space-x-2 align-middle">
                         <button
@@ -232,7 +252,7 @@ export default function DataTable() {
         </div>
       </div>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Dialog and Pagination remain the same... */}
       <Dialog open={deleteDialogOpen} onOpenChange={handleCloseDialog}>
         <DialogContent className="z-50">
           <DialogHeader>
@@ -270,7 +290,6 @@ export default function DataTable() {
         </DialogContent>
       </Dialog>
 
-      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
         <Button
           onClick={() => handlePageChange(currentPage - 1)}
