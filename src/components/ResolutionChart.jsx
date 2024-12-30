@@ -60,7 +60,6 @@ const CaseStatusChart = () => {
     fetchData();
   }, [dateFrom, dateTo]);
 
-
   return (
     <Card>
       <CardHeader>
@@ -136,7 +135,7 @@ const CaseStatusChart = () => {
                 stroke="var(--color-resolved)"
                 strokeWidth={2}
                 dot={false}
-                name="Resolved Activites"
+                name="Resolved Activities"
               />
               <Line
                 type="monotone"
@@ -144,12 +143,24 @@ const CaseStatusChart = () => {
                 stroke="var(--color-remaining)"
                 strokeWidth={2}
                 dot={false}
-                name="Remaining Activites"
+                name="Remaining Activities"
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
+      <CardFooter>
+        <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-2">
+            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: 'var(--color-resolved)' }}></div>
+            <span className="text-sm text-muted-foreground">Resolved Activities</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: 'var(--color-remaining)' }}></div>
+            <span className="text-sm text-muted-foreground">Remaining Activities</span>
+          </div>
+        </div>
+      </CardFooter>
     </Card>
   );
 };

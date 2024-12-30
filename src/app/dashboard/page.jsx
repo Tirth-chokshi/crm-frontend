@@ -107,22 +107,22 @@ export default function Page() {
           <div className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
-          title="Total Customers Registered"
+          title="Total Customers "
           icon={<Users className="h-8 w-8 text-blue-500" />}
           metrics={[{ label: "Customers", value: totalCustomers }]}
         />
         <MetricCard
-          title="Today's Follow-Up Sessions Remaining"
+          title="Today's Activities"
           icon={<UserMinus className="h-8 w-8 text-purple-500" />}
           metrics={[{ label: "Followups", value: todaysFollowups }]}
         />
         <MetricCard
-          title="Today's Follow-Up Sessions Completed"
+          title="Today's Resolved Activities "
           icon={<UserCheck className="h-8 w-8 text-orange-500" />}
           metrics={[{ label: "Completed", value: completedFollowups }]}
         />
         <MetricCard
-          title="Total Cases/Query Resolved"
+          title="Today's Pending Follow-ups"
           icon={<UserCheck className="h-8 w-8 text-green-500" />}
           metrics={[{ label: "Resolved", value: resolvedCases }]}
         />
@@ -154,21 +154,37 @@ export default function Page() {
 
 function MetricCard({ title, icon, metrics }) {
   return (
-    <div className="rounded-lg border text-card-foreground shadow-sm p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-4">
+    <div className="rounded-lg border text-card-foreground shadow-sm hover:shadow-md transition-shadow">
+    {/* Fixed height container with consistent padding */}
+    <div className="h-[200px] p-6 flex flex-col">
+      {/* Header section - Takes up top 40% of space */}
+      <div className="flex items-center gap-3 mb-6">
         <div className="p-2 rounded-lg">
           {icon}
-          <h3 className="text-lg font-semibold space-y-5">{title}</h3>
         </div>
+        <h3 className="text-lg font-semibold line-clamp-2">{title}</h3>
       </div>
-      <div className="text-sm font-medium text-gray-600">
+      
+      {/* Metrics section - Takes up bottom 60% of space */}
+      <div className="flex-1 flex flex-col items-center justify-center">
         {metrics.map((metric, index) => (
           <div key={index} className="text-center">
-            <div className="text-2xl font-semibold">{metric.value}</div>
-            <div className="text-sm text-gray-600">{metric.label}</div>
+            {/* Fixed size container for value to prevent layout shift */}
+            <div className="h-12 flex items-center justify-center">
+              <span className="text-3xl font-bold text-gray-900">
+                {metric.value}
+              </span>
+            </div>
+            {/* Fixed size container for label to prevent layout shift */}
+            <div className="h-6 flex items-center justify-center">
+              <span className="text-sm text-gray-600">
+                {metric.label}
+              </span>
+            </div>
           </div>
         ))}
       </div>
     </div>
+  </div>
   );
 }

@@ -1,13 +1,9 @@
 "use client"
 
 import * as React from "react"
-import {
-  Activity,
-} from "lucide-react"
-
+import { Activity } from "lucide-react"
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
-
 import {
   Sidebar,
   SidebarContent,
@@ -21,44 +17,25 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-
   navMain: [
     {
       title: "Activities",
-      url: "",
+      url: "/dashboard/activity",
       icon: Activity,
-      isActive: true,
-      items: [
-        {
-          title: "Manage",
-          url: "/dashboard/activity",
-        },
-        {
-          title: "History", 
-          url: "/dashboard/activity/history",
-        },
-      ],
     },
-    
   ],
 }
 
-export function AppSidebar({
-  ...props
-}) {
+export function AppSidebar({ ...props }) {
   return (
-    (<Sidebar collapsible="icon" {...props}>
-      {/* <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-      </SidebarHeader> */}
+    <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
         <NavMain items={data.navMain} />        
       </SidebarContent>
-     
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>  
       <SidebarRail />
-    </Sidebar>)
+    </Sidebar>
   );
 }

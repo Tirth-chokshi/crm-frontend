@@ -91,7 +91,7 @@ const ActivityTable = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <h2 className="text-xl font-semibold mb-4">Upcoming Activities</h2>
+      <h2 className="text-xl font-semibold mb-4">Upcoming Follow-ups</h2>
       <div className="flex justify-between items-center gap-4">
         <Input
           placeholder="Search by customer or activity type..."
