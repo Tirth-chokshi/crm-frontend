@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export default function ActivityTypeChart() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#F542A1','33011B'];
 
   useEffect(() => {
     const fetchActivityTypeData = async () => {

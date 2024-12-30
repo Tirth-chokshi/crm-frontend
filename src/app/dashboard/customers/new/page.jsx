@@ -70,7 +70,7 @@ export default function FormComponent() {
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         {/* ID Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label htmlFor="id" style={{ marginBottom: "5px" }}>Customer ID *:</label>
+          <label htmlFor="id" style={{ marginBottom: "5px" }}>Customer ID <span className='text-red-700'>*</span>:</label>
           <input
             type="number"
             id="id"
@@ -85,7 +85,7 @@ export default function FormComponent() {
 
         {/* Name Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label htmlFor="name" style={{ marginBottom: "5px" }}>Name*:</label>
+          <label htmlFor="name" style={{ marginBottom: "5px" }}>Name<span className='text-red-700'>*</span>:</label>
           <input
             type="text"
             id="name"
@@ -100,7 +100,7 @@ export default function FormComponent() {
 
         {/* Mobile Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label htmlFor="mobile" style={{ marginBottom: "5px" }}>Mobile No*:</label>
+          <label htmlFor="mobile" style={{ marginBottom: "5px" }}>Mobile No<span className='text-red-700'>*</span>:</label>
           <input
             type="tel"
             id="mobile"
@@ -116,7 +116,7 @@ export default function FormComponent() {
 
         {/* Email Field */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label htmlFor="email" style={{ marginBottom: "5px" }}>Email*:</label>
+          <label htmlFor="email" style={{ marginBottom: "5px" }}>Email<span className='text-red-700'>*</span>:</label>
           <input
             type="email"
             id="email"
@@ -129,7 +129,7 @@ export default function FormComponent() {
           />
         </div>
         <div>
-          * denotes Mandatory
+        <span className='text-red-700'>*</span> denotes Mandatory
         </div>
         {/* Submit Button */}
         <Button
