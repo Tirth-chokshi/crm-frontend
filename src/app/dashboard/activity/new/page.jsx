@@ -2,9 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+
+// UI Components
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -25,11 +30,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
+// Constants
 const ACTIVITY_TYPES = [
   "Support Call",
   "Follow-Up Call",
@@ -64,11 +68,14 @@ const QUERY_TYPES = [
 
 const RESPONSE_TYPES = ["Positive", "Negative", "Neutral"];
 
+// Helper function for activity type background colors
+
 const CreateActivityForm = () => {
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
   const [selectedCustomerName, setSelectedCustomerName] = useState("");
+  const [enableFollowup, setEnableFollowup] = useState(false);
   const { toast } = useToast();
 
   const form = useForm({
@@ -82,9 +89,10 @@ const CreateActivityForm = () => {
       comments: "",
       case_resolved: "Not Resolved",
       resolution: "",
-      next_followup_date: new Date(),
+      next_followup_date: null,
     },
   });
+
   useEffect(() => {
     fetchCustomers();
   }, []);
@@ -114,20 +122,19 @@ const CreateActivityForm = () => {
 
   const onSubmit = async (data) => {
     try {
+      const formattedData = {
+        ...data,
+        created_by: 1,
+        activity_date: format(data.activity_date, "yyyy-MM-dd HH:mm:ss"),
+        next_followup_date: enableFollowup && data.next_followup_date 
+          ? format(data.next_followup_date, "yyyy-MM-dd HH:mm:ss")
+          : null,
+      };
+
       const response = await fetch("http://localhost:8000/activities/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...data,
-          created_by: 1,
-          activity_date: format(data.activity_date, "yyyy-MM-dd HH:mm:ss"),
-          next_followup_date: format(
-            data.next_followup_date,
-            "yyyy-MM-dd HH:mm:ss"
-          ),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formattedData),
       });
 
       const result = await response.json();
@@ -138,6 +145,7 @@ const CreateActivityForm = () => {
           description: "Activity created successfully",
         });
         form.reset();
+        setEnableFollowup(false);
       } else {
         throw new Error(result.message);
       }
@@ -151,350 +159,277 @@ const CreateActivityForm = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Create New Activity</h1>
+    <div className="max-w-3xl mx-auto p-8  rounded-lg shadow-md">
+      <h1 className="text-3xl font-bold mb-8 text-center">Create New Activity</h1>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Customer Search */}
-          <FormField
-            control={form.control}
-            name="customer_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Customer</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      placeholder="Search customer..."
-                      value={selectedCustomerName}
-                      onChange={(e) => {
-                        filterCustomers(e.target.value);
-                      }}
-                      onFocus={() => setShowCustomerDropdown(true)}
-                      className="w-full"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Customer Search */}
+            <FormField
+              control={form.control}
+              name="customer_id"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Customer</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        placeholder="Search customer..."
+                        value={selectedCustomerName}
+                        onChange={(e) => filterCustomers(e.target.value)}
+                        onFocus={() => setShowCustomerDropdown(true)}
+                        className="w-full"
+                      />
+                      {showCustomerDropdown && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-auto">
+                          {filteredCustomers.map((customer) => (
+                            <div
+                              key={customer.customer_id}
+                              className="p-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => {
+                                field.onChange(customer.customer_id);
+                                setSelectedCustomerName(customer.name);
+                                setShowCustomerDropdown(false);
+                              }}
+                            >
+                              {customer.name}
+                            </div>
+                          ))}
+                          {filteredCustomers.length === 0 && (
+                            <div className="p-2 text-gray-500">
+                              No customers found
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Activity Date */}
+            <FormField
+              control={form.control}
+              name="activity_date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Activity Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full">
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {format(field.value, "PPP")}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Activity Type */}
+            <FormField
+              control={form.control}
+              name="activity_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Activity Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select activity type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {ACTIVITY_TYPES.map((type) => (
+                        <SelectItem
+                          key={type}
+                          value={type}
+                        >
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Query Type */}
+            <FormField
+              control={form.control}
+              name="query"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Query Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select query type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {QUERY_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Customer Response */}
+            <FormField
+              control={form.control}
+              name="customer_response"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Customer Response</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select customer response" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {RESPONSE_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Overall Response */}
+            <FormField
+              control={form.control}
+              name="overall_response"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Overall Response</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select overall response" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {RESPONSE_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Comments */}
+            <FormField
+              control={form.control}
+              name="comments"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Comments</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Add any additional comments..."
+                      className="min-h-[100px]"
                     />
-                    {showCustomerDropdown && (
-                      <div className="absolute z-10 w-full mt-1 bg-background border rounded-md shadow-lg max-h-48 overflow-auto">
-                        {filteredCustomers.map((customer) => (
-                          <div
-                            key={customer.customer_id}
-                            className="p-2 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors duration-200"
-                            onClick={() => {
-                              field.onChange(customer.customer_id);
-                              setSelectedCustomerName(customer.name);
-                              setShowCustomerDropdown(false);
-                            }}
-                          >
-                            {customer.name}
-                          </div>
-                        ))}
-                        {filteredCustomers.length === 0 && (
-                          <div className="p-2 text-muted-foreground">
-                            No customers found
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Activity Date */}
-          <FormField
-            control={form.control}
-            name="activity_date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Activity Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {format(field.value, "PPP")}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
+            {/* Resolution */}
+            <FormField
+              control={form.control}
+              name="resolution"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Resolution</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Add resolution details..."
+                      className="min-h-[100px]"
                     />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Activity Type */}
-          <FormField
-            control={form.control}
-            name="activity_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Activity Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select activity type" />
-                    </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="grid grid-cols-1 gap-1">
-                    {ACTIVITY_TYPES.map((type, index) => (
-                      <SelectItem
-                        key={type}
-                        value={type}
-                        className={`${
-                          type === "Support Call"
-                            ? "bg-green-100"
-                            : type === "Follow-Up Call"
-                            ? "bg-blue-100"
-                            : type === "Complaint"
-                            ? "bg-red-100"
-                            : type === "New Reg. User"
-                            ? "bg-yellow-100"
-                            : type === "Abandoned Cart Call"
-                            ? "bg-purple-100"
-                            : type === "Old Cust. Inactive"
-                            ? "bg-gray-100"
-                            : type === "Outbound Feedback"
-                            ? "bg-teal-100"
-                            : ""
-                        }`}
-                      >
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                  {/* <SelectContent>
-                    {ACTIVITY_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent> */}
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Query */}
-          <FormField
-            control={form.control}
-            name="query"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Query</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+            {/* Follow-up Date Checkbox */}
+            <FormItem className="col-span-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="followup"
+                  checked={enableFollowup}
+                  onCheckedChange={setEnableFollowup}
+                />
+                <label
+                  htmlFor="followup"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select query type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {QUERY_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}
-                      className={
-                        type === "Payment Issue"
-                          ? "bg-red-100"
-                          : type === "Delivery Time Concerns"
-                          ? "bg-yellow-100"
-                          : type === "App Navigation Issues"
-                          ? "bg-blue-100"
-                          : type === "Product Availability"
-                          ? "bg-green-100"
-                          : type === "Higher Item Prices"
-                          ? "bg-purple-100"
-                          : type === "Higher Delivery Price"
-                          ? "bg-pink-100"
-                          : type === "Fewer Restaurant Options"
-                          ? "bg-gray-100"
-                          : type === "Late Order Delivery"
-                          ? "bg-teal-100"
-                          : type === "Missing Items in Order"
-                          ? "bg-orange-100"
-                          : type === "Return Issue"
-                          ? "bg-indigo-100"
-                          : type === "Refund Issue"
-                          ? "bg-light-blue-100"
-                          : type === "Brand Trust Issue"
-                          ? "bg-brown-100"
-                          : type === "Bad Item Quality"
-                          ? "bg-dark-gray-100"
-                          : type === "Not Interested"
-                          ? "bg-gray-100"
-                          : type === "Technical Issue"
-                          ? "bg-cyan-100"
-                          : type === "No Requirement"
-                          ? "bg-light-gray-100"
-                          : type === "No Feedback"
-                          ? "bg-transparent"
-                          : type === "Search Issue"
-                          ? "bg-blue-gray-100"
-                          : type === "Delivery Not Available"
-                          ? "bg-dark-blue-100"
-                          : ""}
-                      >
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  Schedule Follow-up
+                </label>
+              </div>
+            </FormItem>
 
-          {/* Customer Response */}
-          <FormField
-            control={form.control}
-            name="customer_response"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Customer Response</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className={
-                    field.value === "Positive"
-                      ? "bg-green-100 text-green-800"
-                      : field.value === "Negative"
-                      ? "bg-red-100 text-red-800"
-                      : field.value === "Neutral"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : ""
-                  }
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select customer response" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {RESPONSE_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}
-                      className={
-                        field.value === "Positive"
-                          ? "bg-green-100 text-green-800"
-                          : field.value === "Negative"
-                          ? "bg-red-100 text-red-800"
-                          : field.value === "Neutral"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : ""
-                      }>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
+            {/* Next Follow-up Date */}
+            {enableFollowup && (
+              <FormField
+                control={form.control}
+                name="next_followup_date"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Next Follow-up Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? format(field.value, "PPP") : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             )}
-          />
-
-          {/* Overall Response */}
-          <FormField
-            control={form.control}
-            name="overall_response"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Overall Response</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select overall response" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {RESPONSE_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Comments */}
-          <FormField
-            control={form.control}
-            name="comments"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Comments</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="Add any additional comments..."
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Resolution */}
-          <FormField
-            control={form.control}
-            name="resolution"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Resolution</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="Add resolution details..."
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Next Follow-up Date */}
-          <FormField
-            control={form.control}
-            name="next_followup_date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Next Follow-up Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {format(field.value, "PPP")}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          </div>
 
           <Button type="submit" className="w-full">
             Create Activity

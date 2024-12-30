@@ -116,7 +116,9 @@ export default function ActivityView() {
           </p>
           <p className="text-gray-600">
             <strong>Next Follow-Up Date:</strong>{" "}
-            {new Date(activity.next_followup_date).toLocaleDateString()}
+            {activity.next_followup_date === null
+              ? "Not Set"
+              : new Date(activity.next_followup_date).toLocaleDateString()}
           </p>
         </div>
 
