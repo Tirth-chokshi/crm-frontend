@@ -156,7 +156,7 @@ function MetricCard({ title, icon, metrics }) {
   return (
     <div className="rounded-lg border text-card-foreground shadow-sm p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-4">
-        <div className="p-2 rounded-lg bg-gray-50">
+        <div className="p-2 rounded-lg">
           {icon}
           <h3 className="text-lg font-semibold space-y-5">{title}</h3>
         </div>

@@ -22,6 +22,7 @@ import {
 import { useRouter } from "next/navigation"
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Badge } from "@/components/ui/badge"
 const ITEMS_PER_PAGE = 10
 
 export default function CRMActivityTable() {
@@ -106,6 +107,18 @@ export default function CRMActivityTable() {
     console.log("Activity ID being passed:", activityId);
     router.push(`/dashboard/activity/update/${activityId}`);
   };
+  const getStatusBadgeStyle = (status) => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "bg-yellow-200 text-yellow-700";
+      case "not resolved":
+        return "bg-red-200 text-red-700";
+      case "resolved":
+        return "bg-green-200 text-green-700";
+      default:
+        return "bg-gray-200 text-gray-700";
+    }
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -174,12 +187,12 @@ export default function CRMActivityTable() {
               <TableCell>{activity["Activity Type"]}</TableCell>
               <TableCell>{new Date(activity.Date).toLocaleString()}</TableCell>
               <TableCell>
-                <span
-                  className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                    activity.Status === "Resolved" ? "bg-green-500" : activity.Status === "Not Resolved" ? "bg-red-500" : "bg-yellow-500"
-                  }`}
-                ></span>
-                {activity.Status}
+                <Badge
+                  className={getStatusBadgeStyle(activity.Status)}
+                >
+                  {activity.Status}
+                </Badge>
+                {/* {activity.Status} */}
               </TableCell>
               <TableCell> 
                <div className="flex space-x-2 align-middle">

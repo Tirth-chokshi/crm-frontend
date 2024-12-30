@@ -26,7 +26,6 @@ const columns = [
   "ID",
   "Name",
   "Mobile No",
- 
   "Email",
   "Updation",
 ];
